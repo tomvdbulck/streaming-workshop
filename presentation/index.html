@@ -3,7 +3,7 @@
 
 <head lang="en">
     <meta charset="UTF-8">
-    <title>JWorks - Kafka DIY</title>
+    <title>JWorks - Streaming Frameworks</title>
     <link rel="stylesheet" href="css/reveal.css">
     <link rel="stylesheet" href="css/ordina.css" id="theme">
     <link rel="stylesheet" href="css/custom.css">
@@ -28,7 +28,7 @@
     <div class="reveal">
         <div class="slides">
             <section>
-                <h1>Kafka</h1>
+                <h1>Streaming Frameworks</h1>
                 <h3>Do It Yourself</h3>
                 <img src="img/jworks-logo.png" style="vertical-align: bottom;" width="22.5%"/>
             </section>
@@ -51,426 +51,240 @@
             <section>
                 <h2>Agenda</h2>
                 <ul>
-                    <li>What is Streaming</li>
-                    <li>Spring Cloud Stream</li>
+                    <li>Streaming?</li>
+                    <li>Typical Problems?</li>
+                    <li>Streaming Operations?</li>
+                    <li>Storm</li>
                     <li>Apache Spark</li>
                     <li>Apache Flink</li>
                     <li>Kafka Streams</li>
+                    <li>Spring Cloud Stream</li>
+                    <li>Recap</li>
+                    <li>What Next</li>
                 </ul>
             </section>
 
             <!-- Example of nested vertical slides -->
             <section>
                 <section>
-                    <h2>Streaming</h2>
-
-                    <img width="50%" src="img/kafka_logo.png">
-                </section>
-                <section>
-                    <h2>Kafka</h2>
-                    <img width="50%" src="img/kafka_diagram.png">
-                    
-                    <aside class="notes">
-                    <ul>
-                        <li>Messaging</li>
-                        <li>Storage data - event log</li>
-                        <li>Streams</li>
-                    </ul></aside>
+                    <h2>Why Streaming?</h2>
                 </section>
                 
-                
-                
-                
                 <section>
-                    <h2>Kafka: Design Goals</h2>
-                    <p> High volume publish-subscribe message and streams</p>
-                    <p>
-                        Durable<br/>
-                        Fast<br/>
-                        Scalable<br/>
-            
-                    </p>
+                    <h2>Lambda Architecture</h2>
+                    <img width="75%" src="img/lambda_architecture.png">
                     <aside class="notes">
-                        At its essence, Kafka provides a durable message store, similar to a log, run in a server cluster, that stores streams of records in categories called topics
+                    The lambda architecture 
+                        Nightly batch calculates data which is placed in a DB for quick retrieval
+                        Speed layer then calculates more recent data - again in another DB
+                        The service layer will then have to decide which information is the most truthfull
+                        (Speed layers might also use some guessing, ... )
+                        
+                        Originally: just streaming would not be correct 
                     </aside>
                 </section>
                 <section>
-                    <h2>Kafka: Dumb Brokers</h2>
+                    <img width="75%" src="img/EveryMinuteInternet.png">
+                    <aside class="notes">
+                         IOT
+                         Clickstreams
+                         Monitoring Data
+                         Online Games
+                         Financial Transactions
+                    </aside>     
+                </section>
+                <section>
+                    <h2>IoT</h2>
+                    <img width="50%" src="img/sources/IOT.jpg">
+                     
+                </section>
+                
+                <section>
+                    <h2>Clickstreams</h2>
+                    <img width="50%" src="img/sources/clickstream.gif">   
+                </section>
+                <section>
+                    <h2>Monitoring Data</h2>
+                    <img width="50%" src="img/sources/monitoring.png">    
+                </section>
+                <section>
+                    <h2>Online Games</h2>
+                    <img width="50%" src="img/sources/candycrush.gif">     
+                </section>
+                <section>
+                    <h2>Financial Transactions</h2>
+                    <img width="50%" src="img/sources/financial_transaction.gif">    
+                </section>
+                <section>
+                    <h2>Streaming: Endless &#38; Continuous Data</h2>
+                    <img width="50%" src="img/wild_river.jpg">
+                    
                     <p>
-                        Smart Consumers <br/>
-                        Retains all messages <br/>
+                        Continuous Flow </br>
+                        Speed &#38; Realtime <br/>
+                        Distributed &#38; Scalable <br/>
+                    </p>
+                    <aside class="notes">
+                    Continuous flow of data - we do not know if there will be an end
+                    Where we do not want to wait on the next day to get the results - image an application where you ask the user to wait for tomorrow because we do nightly batches
+                    Realtime     
+                        
+                </section>
+             </section> 
+            <section>
+
+                <section>
+                    <h2>Streaming: Typical Problems</h2>
+                    <p>
+                        
                         
                     </p>
-                    <aside class="notes"></aside>
+                    <aside class="notes">
+                        Time 
+                        Order
+                        Event time vs processing time
+                    </aside>
+                </section>
+                <section>
+                    <h2>Time</h2>
+
+
+                </section>
+                <section>
+                    <h2>Order</h2>
+
+
+                </section>
+                <section>
+                    <h2>Event Time vs Processing Time</h2>
+
+
+                </section>
+                
+                <section>
+                    <h2>Stream Operations </h2> 
+                    <p>
+                        Filter &#38; Transform </br>
+                        Group </br>
+                        Aggregate </br>
+                        Windows </br>
+                    </p>
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Filter &#38; Transform  </h2> 
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>
+            
+                <section>
+                    <h2>Group </h2> 
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>
+
+
+                <section>
+                    <h2>Aggregate </h2> 
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>
+            
+            
+                <section>
+                    <h2>Windows </h2> 
+                    <aside class="notes">
+                        Tumbling Window 
+                        Sliding Window
+                        Session Window
+                        Time Trigger
+                        Count Trigger
+                        Content Trigger
+                    </aside>
                 </section>
             </section>
+
             <section>
+                <section>
+                    <h2>Kafka Streams</h2>
+                    <img width="50%" src="img/kafka_logo.png">
+                
+                </section>
+                
+        
+           </section>
+            
+           <section>
+                <section>
+                    <h2>Apache Storm</h2>
+                     <img width="50%" src="img/storm/logo.png">    
+                
+                </section>
+                
+        
+           </section>
+            
+           
+            <section>
+                <section>
+                    <h2>Spark</h2>
+                   <img width="50%" src="img/spark/spark-logo-trademark.png">    
+
+                
+                </section>
+                <section>
+                    <h2>Micro-Batching</h2>
+                
+                
+                </section>
+        
+           </section>    
+           <section>
+                <section>
+                    <h2>Apache Flink</h2>
+                    <img width="50%" src="img/flink/flink-header-logo.svg">    
+
+                
+                </section>
+                
+        
+           </section>    
+           <section>
                 <section>
                     <h2>Spring Cloud Stream</h2>
-                <p>
-                    <ul>
-                        <li>Zookeeper</li>
-                        <li>Broker</li>
-                        <li>Controller</li>
-                        <li>Topics</li>
-                        <li>Partitions</li>
-                        <li>Replication</li>
-                        <li>Producers</li>
-                        <li>Consumers</li>
-                        <li>Consumer offset</li>
-                        <li>Failover</li>
-                    </ul>
-                </p>
+                    <img width="50%" src="img/spring/icon-spring-cloud.svg">    
                 
                 </section>
                 
         
-                <section>
-                    <h2>Zookeeper</h2>
+           </section> 
 
-                    <img width="20%" src="img/zookeeper_logo.jpeg">
-                    
-                    <aside class="notes">
-                        A Distributed Coordination Service
-                        For distributed Applications
-                        Data model styled after the familiar tree structure of file systems
-                        Easy to program to so that distributed applications can build upon for synchronization, configuration maintenance and groups and naming.
-                    </aside>   
-                </section>
-                <section>
-                    <h2>Zookeeper: Why does Kafka Need it</h2>
-                    <p>
-                        <ul>
-                            <li>Electing a Controller</li>
-                            <li>Cluster Membership</li>
-                            <li>Topic Configuration</li>
-                            <li>Quotas</li>
-                            <li>ACL: Who is allowed to read and write</li>
-                        </ul>
-                    
-                    </p>
-                <aside class="notes">
-                        Cluster membership: which brokers are alive and part of the cluster.
-                    
-                        Which topics exist, how many partitions, where are the replicas, ... 
-                        
-                        How much data is each client allowed to read and write
-                        
-                        Kafka comes with Kafka Authorization Command Line - define uses and access
-                    </aside>
-                </section>
-                <section>
-                    <h2>Brokers</h2>   
-                    <p>
-                        Node, Broker, Kafka Server => all the same
-                    </p>
-                    <p>
-                        Hosts topics<br/>
-                        Stores messages
-                    </p>
-                    <aside class="notes">
-                        Stores messages on disk by a unique offset
-                        Shares information between other brokers and zookeeper
-                    </aside>
-                </section>
-                <section>
-                    <h2>The Controller</h2>  
-                    <p>Manage State of Partitions and Replicas</p>
-                    <p>Reassign Partitions</p>
             
-                    <aside class="notes">
-                         The controler is one of the brokers, a broker is a kafka node, which is is responsible to maintain the leader/follower relationship for all Partitions. Zookeepers makes sure there is 1 and if it crashed will elect a new one. The controller will tell replicas to become partition leaders - can reshuffle partitions, ... 
-                        
-                        see: https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Controller+Internals
-                    </aside>
-                </section>
-                <section>
-                    <h2>Topics</h2>  
-                    <p>
-                        Virtual Group of partitions
-                    </p>
-                    <p>
-                        Producers write messages.<br/>
-                        Consumes read messages.
-                    </p>
-                </section>
-                <section>
-                    <h2>Partitions</h2>    
-                    <p>
-                        Topics are split in partitions.<br/>
-                        1 broker is leader.
-                    </p>
-                    <p>
-                        Used to scale.
-                    </p>
-                    <aside class="notes">
-                        Producers and Consumer only speak with the leader.
-                        
-                        A list of insync replica's is maintained by the brokers / partition.
-                        New leader is elected if required.
-                        
-                        Used to scale up or down the cluster.
-                        As consumers and producers approach the cluster via partitions.
-                    </aside>
-                </section>
-                <section>
-                    <h2>Partitions: Rebalancing</h2>    
-                    <p> auto.leader.rebalance.enable: true (default) </p>
-                        
-                    <p>    also manual rebalancing possible
-                    </p>
-                    <aside class="notes">
-                    
-                        kafka-preferred-replica-election.sh tool
-                        
-                        see: https://docs.confluent.io/current/kafka/rebalancer/rebalancer.html
-                    </aside>
-                </section>
-                <section>
-                    <h2>Replication</h2>   
-                    <p>
-                        Fail-Over.<br/>
-                        Each broker: Maintains list of In Sync Replicas.
-                    </p>
-                    <p>
-                        Brokers with replicas only keep these in sync with the Partition Master.
-                    </p>
-                    <aside class="notes">
-                    Data from producers is first saved to a commit log before consumers can find out that it is
-available. It will only be visible to consumers when the followers acknowledge that they have
-got the data and stored in their local logs.
-                    </aside>
-                </section>
-                
-                <section>
-                    <h2>Replication: They all die.</h2>   
-                    <p>
-                        Wait for an ISR replica to come back
-                    </p>
-                    <p>
-                        Or<br/> 
-                        choose the first replica which comes back.
-                    </p>
-                    <aside class="notes">
-                        Tradeoff between availability and consistency.
-                        
-                        By default, Kafka chooses the second strategy and favor choosing a potentially inconsistent replica when all replicas in the ISR are dead. This behavior can be disabled using configuration property unclean.leader.election.enable, to support use cases where downtime is preferable to inconsistency.
-                    </aside>
-                </section>
-                <section>
-                    <h2>Replication: Acknowledgement</h2>  
-                    <p>
-                        Choose for acknowledgement by 0, 1 or all (ISR) Replicas.<br/> 
-                        Only for producers.
-                    </p>
-                    <p>
-                        Extra options:<br/> 
-                        
-                        Disable unclean leader election.<br/> 
-                        Minimum ISR size.<br/> 
-                    
-                    </p>
-                </section>
-                <section>
-                    <h2>Producers</h2>  
-                    <p>
-                        Push messages into Kafka Topics.<br/> 
-                        <br/>
-                        Can provide partition key.<br/> 
-                        Message gets forwarded to the leader.
-                    </p>
-                </section>
-                <section>
-                    <h2>Messages / Records</h2>
-                    <p>
-                        Unique offset within partition.<br/>
-                        Remain until TTL or after compaction.
-                    </p>
-                    <p>
-                        <ul>
-                        <li>key</li>
-                        <li>value</li>
-                        <li>timestamp</li>
-                        </ul>
-                    </p>
-                    <aside class="notes">
-                        Partitioning occurs on this key.
-                        
-                        Please note that offset <> key.
-                    </aside>
-                </section>    
-                <section>
-                    <h2>Consumers</h2>   
-                    <p>
-                    Reads messages from a specific offset.
-                    <br/>
-                    Asks for messages - pull, as not to overload.     
-                    </p>
-                    <br/>
-                    Can only read messages which are fully in sync.
-                </section>
-                <section>
-                    <h2>Consumer Offset</h2> 
-                    <p>
-                        Stored in Kafka. (previously Zookeeper)
-                        <br/>
-                        Exactly once: read and commit offset in transaction
-                    </p>
-                    <p>
-                        The consumer can change this offset.
-                    </p>
-                </section>
-                <section>
-                    <h2>Consumer Groups</h2> 
-                    <p>
-                        1 partition can be read by 1 consumer of the group.
-                        </br>
-                        parallel processing.
-                    </p>
-                </section>
-            </section>
-            
-
-        
 
             <section>
                 <section>
-                    <h2>Hands On</h2>
-                    <p>https://github.com/tomvdbulck/kafka-handson-workshop</p>
-                </section>
-                
-                <section>
-                    <h2>Hands On: Agenda</h2>
-                    <p>
-                        <ul>
-                            <li>Docker</li>
-                            <li>Postman</li>
-                            <li>RabbitMQ</li>
-                            <li>The application</li>
-                            <li>DIY: Native</li>
-                            <li>DIY: Reactor</li>
-                            <li>DIY: Spring Cloud Stream</li>
-                            <li>DIY: Bunny Time</li>
-                        </ul>
-                    </p>
-                </section>
-                <section>
-                    <img width="50%" src="img/docker-horizontal.png">
-                    <p>
-                        <code>
-                            > docker build -t kafka-zookeeper .
-                        </code><br/>
-                        <code>
-                        > docker run --name kafka-zookeeper -e ADVERTISED_HOST=localhost -e ADVERTISED_PORT=9092 -i -t -p 2181:2181 -p 9092:9092 kafka-zookeeper
-                        
-                        </code>
-                    
-                    </p>
-                    <aside class="notes">
-                        open a shell and go to /single-docker
-                        
-                        > docker build -t kafka-zookeeper .
-                        
-                        > docker run --name kafka-zookeeper -e ADVERTISED_HOST=localhost -e ADVERTISED_PORT=9092 -i -t -p 2181:2181 -p 9092:9092 kafka-zookeeper
-                        
-                    
-                    </aside>
-                </section>
-                <section>
-                    <img width="50%" src="img/postman-logo.svg">
-                    <p>
-                        Install Postman: https://www.getpostman.com/<br/>
-                        Import the collection: kafka-workshop.postman_collection.json.
-                    </p>
-                    <aside class="notes">
-                        Install Postman: https://www.getpostman.com/
-                        Import the collection: kafka-workshop.postman_collection.json.
-                    </aside>
-                </section>
-                <section>
-                    <img width="50%" src="img/RabbitMQ-logo.svg">
-                    <p>
-                        https://www.rabbitmq.com/download.html
-                    </p>
-                    <p>
-                        <img width="50%" src="img/rabbitmq-config.png">
-                    </p>
-                    <p>
-                        Go to http://localhost:15672/ <br/>
-                        Use: guest/guest (super safe)
-                    </p>
-                    <p>
-                        Verify if the port config in application.yml corresponds.
-                    </p>
-                    <aside class="notes">
-                        https://www.rabbitmq.com/download.html
-                        
-                        > brew install rabbitmq
-                        
-                        > cd /usr/local/sbin
-                        
-                        > ./rabbitmq-server
-                        
-                        Go to http://localhost:15672/
-                        
-                        User/Pwd: guest / guest
-                    
-                    </aside>
-                </section>
-                <section>
-                    <h2>The Application</h2>
-                    <p>
-                        Simple REST controllers <br/>
-                        Postman is used to send the calls - looks good enough <br/>
-                    </p>
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Native</h2>
-                    <img width="75%" src="img/native-producer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Native</h2>
-                    <img width="50%" src="img/native-consumer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Reactor</h2>
-                    <img width="75%" src="img/reactor-producer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Reactor</h2>
-                    <img width="50%" src="img/reactor-consumer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Spring Cloud Stream</h2>
-                    <img width="75%" src="img/springcloud-producer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Spring Cloud Stream</h2>
-                    <img width="50%" src="img/springcloud-consumer.png">
-                    <aside class="notes"></aside>
-                </section>
-                <section>
-                    <h2>DIY: Bunny Time</h2>
-                    <img width="50%" src="img/bunny-time.gif">
-                </section>
-                <section>
-                    <h2>DIY: Bunny Time</h2>
-                    <img width="50%" src="img/set-rabbitmq.png">
-                    <p>switch to RabbitMQ: set defaultCandidate of rabbit to true</p>
-                </section>
+                    <h2>Recap</h2>
 
-                
+                </section>
             </section>
 
-            
+            <section>
+                <section>
+                    <h2>What Next?</h2>
 
-    
+                </section>
+
+                <section>
+                    <h2>What Next?</h2>
+                    <img width="75%" src="img/choose2.gif">        
+                </section>
+            </section>
     
 
             <section>
