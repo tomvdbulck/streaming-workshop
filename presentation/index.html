@@ -363,8 +363,113 @@
                      <img width="50%" src="img/storm/logo.png">    
                 </section>
                 <section>
-                    <h2></h2>
+                    <h2>Apache Storm</h2>
+                    <h3>
+                        First production-ready stream processor
+                        
+                    </h3>
+                    <aside class="notes"> by twitter </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm</h2>
+                    <h3>
+                        Low Level: no primitives for joins or aggregations
+                    </h3>
                     <aside class="notes"></aside>
+                </section>
+                <section>
+                    <h2>Apache Storm</h2>
+                    <h3>
+                        Native Stream Processor (latency 50ms possible)
+                        
+                    </h3>
+                    <aside class="notes"></aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Users</h2>
+                    <p>
+                        Twitter </br>
+                        Ali Baba </br>
+                        Spotify </br>
+                        Yelp
+                    </p>
+                    <aside class="notes"></aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: DataFlow</h2>
+                    <h3>Spouts </br>
+                        Bolts
+                    </h3>
+                </section>
+                <section>
+                    <h2>Apache Storm: DataFlow</h2>
+                    <img width="80%" src="img/storm/storm-flow.png">
+                    <aside class="notes">
+                        Spouts: intake of data
+                        Bolts: logic, process and emit data
+                        
+                        Directed Aclyclic Graphs
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Fault Tolerance </h2>
+                    <p>
+                        Every tuple tracked    </br>
+                        At-Least-Once
+                    </p>
+                    <aside class="notes">
+                        at least see every tuple once.
+                        every acknowledge goes back.
+                        
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Architecture</h2>
+                    <img width="75%" src="img/storm/architecture.png">
+                    <aside class="notes">
+                        Nimbus is the master node, distributes code through the cluster
+                        Assigns work to the worker nodes.
+                        
+                        Each worker runs a supervisor - which can run 1 or more worker processes.
+                        Each worker 1 JVM.
+                        
+                        Zookeeper is used to manage the cluster state
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: State</h2>
+                    <img width="50%" src="img/storm/redis.png">
+                    <aside class="notes">
+                        In memory or Redis Backed reliable state - persisted during operation.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Back Pressure</h2>
+                    <img width="75%" src="img/storm/slow_down.gif">
+                    <aside class="notes">
+                        Check on a watermark => previous node slow down
+                        
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Trident</h2>
+                    <img width="75%" src="img/storm/trident.gif">
+                    <aside class="notes">
+                        Check on a watermark => previous node slow down
+                        
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Storm: Trident </h2>
+                    <p>
+                        Exactly once possible </br>
+                        Micro Batching </br>
+                        More overhead </br>
+                    
+                    </p>
+                    <aside class="notes">
+                        
+                    </aside>
                 </section>
                 
         
@@ -373,11 +478,97 @@
            
             <section>
                 <section>
-                    <h2>Spark</h2>
-                    <img width="50%" src="img/spark/spark-logo-trademark.png">                    
+                    <h2>Apache Spark</h2>
+                    <img width="50%" src="img/spark/spark-logo-trademark.png">  
+                    <aside class="notes">
+                        MapReduce successor.
+                    
+                    </aside>
                 </section>
                 <section>
-                    <h2>Micro-Batching</h2>
+                    <h2>Apache Spark</h2>
+                    <img width="50%" src="img/spark/spark-stack.png">  
+                    <aside class="notes">
+                        MapReduce successor.
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: Micro-Batching</h2>
+                    <aside class="notes">
+                        latency of seconds
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: Rich Features</h2>
+                    <p>
+                        Stateful </br>
+                        Exactly-Once </br>
+                        
+                    </p>
+                    <aside class="notes">
+                        
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: Streaming</h2>
+                    <img width="80%" src="img/spark/streaming-flow.png">  
+                    <aside class="notes">
+                       Resilient Distributed Dataset: immutable collection and deterministic operations.
+                        
+                        State can be reproduced
+                        Periodic checkpoints
+                        
+                        RDD processed in order, no ordering withing RDD
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: DStream</h2>
+                    <img width="80%" src="img/spark/streaming-dstream.png">  
+                    <aside class="notes">
+                       Discretized Stream is the basic abstraction.
+                        It represents a continuous stream of data.
+                        A continuous series of RDDs
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: RDD</h2>
+                    <img width="80%" src="img/spark/streaming-dstream-ops.png">  
+                    <aside class="notes">
+                       Resilient Distributed Dataset: immutable collection and deterministic operations.
+                        
+                        State can be reproduced
+                        Periodic checkpoints
+                        
+                        RDD processed in order, no ordering withing RDD
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: Architecture</h2>
+                    <img width="80%" src="img/spark/cluster-overview.png">  
+                    <aside class="notes">
+                       Sparkcontext connects to cluster managers (Mesos, YARN, ... ) and coordinates.
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: State Management</h2>
+                    <img width="50%" src="img/spark/yes.gif">  
+                    <aside class="notes">
+                      Spark Streaming recovers both lost work and operator state (e.g. sliding windows) out of the box, without any extra code on your part.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Spark: Back Pressure</h2>
+                    <img width="60%" src="img/spark/throttle2.gif">  
+                    <aside class="notes">
+                      Can be configured
+                    </aside>
                 </section>
         
            </section>    
@@ -405,6 +596,17 @@
                 
         
            </section> 
+
+            <section>
+                <section>
+                    <h2>Others</h2>
+                    <aside class="notes">
+                        Apache Samza: linkedin - realtime on top of Kafka
+                    
+                    </aside>
+                </section>
+
+            </section>
 
             
 
