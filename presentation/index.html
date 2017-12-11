@@ -54,10 +54,10 @@
                     <li>Streaming?</li>
                     <li>Typical Problems?</li>
                     <li>Streaming Operations?</li>
+                    <li>Kafka Streams</li>
                     <li>Storm</li>
                     <li>Apache Spark</li>
                     <li>Apache Flink</li>
-                    <li>Kafka Streams</li>
                     <li>Spring Cloud Stream</li>
                     <li>Recap</li>
                     <li>What Next</li>
@@ -117,18 +117,22 @@
                 </section>
                 <section>
                     <h2>Streaming: Endless &#38; Continuous Data</h2>
-                    <img width="50%" src="img/wild_river.jpg">
+                    <img width="70%" src="img/wild_river.jpg">
+                    
+                    <aside class="notes">
+                    Continuous flow of data - we do not know if there will be an end
+                    Where we do not want to wait on the next day to get the results - image an application where you ask the user to wait for tomorrow because we do nightly batches
+                    Realtime     
+                    </aside>    
+                </section>
+                 <section>
+                    <h2>Streaming: Endless &#38; Continuous Data</h2>
                     
                     <p>
                         Continuous Flow </br>
                         Speed &#38; Realtime <br/>
                         Distributed &#38; Scalable <br/>
-                    </p>
-                    <aside class="notes">
-                    Continuous flow of data - we do not know if there will be an end
-                    Where we do not want to wait on the next day to get the results - image an application where you ask the user to wait for tomorrow because we do nightly batches
-                    Realtime     
-                        
+                    </p> 
                 </section>
              </section> 
             <section>
@@ -147,17 +151,44 @@
                 </section>
                 <section>
                     <h2>Time</h2>
-
+                    <img width="75%" src="img/problems_and_windows/timing.gif">
+                    <aside class="notes">
+                        When does an event occur and when is it detected by the system
+                    </aside>
 
                 </section>
                 <section>
                     <h2>Order</h2>
-
+                     <img width="75%" src="img/problems_and_windows/out_of_order.gif">
+                    <aside class="notes">
+                        Other events missing
+                    </aside>
 
                 </section>
                 <section>
                     <h2>Event Time vs Processing Time</h2>
+                    
+                    <img width="75%" src="img/problems_and_windows/event_processing_time2.png">
 
+                    <aside class="notes">
+                    
+                        Event Time is when the event has occured and processing time is when it has been occured.
+                        Ideal world these times are identical.
+                        
+                    </aside>
+
+                </section>
+                <section>
+                    <h2>Event Time vs Processing Time</h2>
+                    
+                    <img width="85%" src="img/problems_and_windows/event_processing_time.svg">
+
+                    <aside class="notes">
+                    
+                        Event Time is when the event has occured and processing time is when it has been occured.
+                        Ideal world these times are identical.
+                        
+                    </aside>
 
                 </section>
             </section>
@@ -174,32 +205,13 @@
                         Windows </br>
                     </p>
                     <aside class="notes">
+                        Filter and Transform events.
+                        Group based on a key.
                         
+                        Aggregate Like sum and count.
+                        Since this data is unbouned => on a window
                     </aside>
                 </section>
-
-                <section>
-                    <h2>Filter &#38; Transform  </h2> 
-                    <aside class="notes">
-                        
-                    </aside>
-                </section>
-            
-                <section>
-                    <h2>Group </h2> 
-                    <aside class="notes">
-                        
-                    </aside>
-                </section>
-
-
-                <section>
-                    <h2>Aggregate </h2> 
-                    <aside class="notes">
-                        
-                    </aside>
-                </section>
-            
             
                 <section>
                     <h2>Windows </h2> 
@@ -220,7 +232,7 @@
                 </section>
                 <section>
                     <h2>Tumbling &#38; Sliding Windows</h2> 
-                    <img width="75%" src="img/problems_and_windows/tumbling_sliding.png">
+                    <img width="85%" src="img/problems_and_windows/tumbling_sliding.png">
                     <aside class="notes">
                         Tumbling - just folds over, no overlapping
                         
@@ -241,6 +253,7 @@
                         delayed element - what does it mean - over here it meant that the windows needed to be merged because the timespan was not long enough. Streaming frameworks can handle this for you
                     </aside>
                 </section>
+                
                 <section>
                     <h2>Triggers</h2>
                     <p>
@@ -252,7 +265,7 @@
                     <h2>Time Triggers</h2>
                     <img width="70%" src="img/problems_and_windows/time_trigger.gif">
                     <aside class="notes">
-                    
+                        Can be on events / processing time / ... 
                     </aside>
                 </section>
                 <section>
@@ -267,9 +280,70 @@
                     <img width="70%" src="img/problems_and_windows/interrupt_trigger.gif">
                     <aside class="notes">
                         A logout for example
+                        
+                        These triggers can be combined off course
                     </aside>
                 </section>
 
+                <section>
+                    <h2>The dataflow model</h2>
+                    <h3>A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing - by Google</h3>
+                    <aside class="notes">
+                        Stop trying to groom unbounded datasets in finite pools of information => microbatching.
+                        
+                        We need to balance between correctness, time and cost for resources.
+                        => watermarks (when will the results be calculated°
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>The dataflow model</h2>
+                     <img width="70%" src="img/problems_and_windows/balancing.gif">
+                    <aside class="notes">
+                        Stop trying to groom unbounded datasets in finite pools of information => microbatching.
+                        
+                        We need to balance between correctness, time and cost for resources.
+                        => watermarks (when will the results be calculated°
+                    </aside>
+                </section>
+
+                
+                <section>
+                    <h2>Watermarking</h2>
+                    <aside class="notes">
+                        Stop trying to groom unbounded datasets in finite pools of information => microbatching.
+                        
+                        We need to balance between correctness, time and cost for resources.
+                        => watermarks (when will the results be calculated°
+                    </aside>
+                </section>   
+                <section>
+                    <h2>Watermarking: Handling Late Data</h2>
+                    <img width="70%" src="img/problems_and_windows/watermarking_1.png">
+                    <aside class="notes">
+                        Stop trying to groom unbounded datasets in finite pools of information => microbatching.
+                        
+                        We need to balance between correctness, time and cost for resources.
+                        => watermarks (when will the results be calculated°
+                    </aside>
+                </section>   
+                <section>
+                    <h2>Watermarking: Handling Late Data</h2>
+                    <img width="70%" src="img/problems_and_windows/watermarking_2.png">
+                    <aside class="notes">
+                        In this example a threshold of 10 minutes are defined - anything after that will be ignored
+                        
+                        Watermarks can also be heurestig - if too much events are out of the window the watermak can update itself
+                    </aside>
+                </section>  
+                <section>
+                    <h2>Accumulate Results</h2>    
+                    <p>
+                        Discard old results</br>
+                        Accumulate all results</br>
+                        Accumulate and Retract: both accumulation and retraction</br>
+                    </p>
+                </section>    
         
             </section>
 
@@ -287,7 +361,10 @@
                 <section>
                     <h2>Apache Storm</h2>
                      <img width="50%" src="img/storm/logo.png">    
-                
+                </section>
+                <section>
+                    <h2></h2>
+                    <aside class="notes"></aside>
                 </section>
                 
         
@@ -297,14 +374,10 @@
             <section>
                 <section>
                     <h2>Spark</h2>
-                   <img width="50%" src="img/spark/spark-logo-trademark.png">    
-
-                
+                    <img width="50%" src="img/spark/spark-logo-trademark.png">                    
                 </section>
                 <section>
                     <h2>Micro-Batching</h2>
-                
-                
                 </section>
         
            </section>    
@@ -312,8 +385,10 @@
                 <section>
                     <h2>Apache Flink</h2>
                     <img width="50%" src="img/flink/flink-header-logo.svg">    
-
-                
+                </section>
+               <section>
+                    <h2></h2>
+                    <aside class="notes"></aside>
                 </section>
                 
         
@@ -322,7 +397,10 @@
                 <section>
                     <h2>Spring Cloud Stream</h2>
                     <img width="50%" src="img/spring/icon-spring-cloud.svg">    
-                
+                </section>
+               <section>
+                    <h2></h2>
+                    <aside class="notes"></aside>
                 </section>
                 
         
