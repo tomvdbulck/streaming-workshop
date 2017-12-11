@@ -160,7 +160,11 @@
 
 
                 </section>
-                
+            </section>
+            <section>
+                <section>
+                    <h2>Stream Operations </h2> 
+                </section>
                 <section>
                     <h2>Stream Operations </h2> 
                     <p>
@@ -199,6 +203,12 @@
             
                 <section>
                     <h2>Windows </h2> 
+                    <p>
+                        Tumbling Windows </br>
+                        Sliding Windows  </br>
+                        Session Windows  </br>
+                    
+                    </p>
                     <aside class="notes">
                         Tumbling Window 
                         Sliding Window
@@ -208,6 +218,59 @@
                         Content Trigger
                     </aside>
                 </section>
+                <section>
+                    <h2>Tumbling &#38; Sliding Windows</h2> 
+                    <img width="75%" src="img/problems_and_windows/tumbling_sliding.png">
+                    <aside class="notes">
+                        Tumbling - just folds over, no overlapping
+                        
+                        Sliding - 4 second window is moved every 2 seconds
+                    </aside>
+                </section>
+                <section>
+                    <h2>Session Windows</h2> 
+                    <img width="75%" src="img/problems_and_windows/session_window1.png">
+                    <aside class="notes">
+                        every element is taken by a key - by a user for example
+                    </aside>
+                </section>
+                <section>
+                    <h2>Session Windows</h2> 
+                    <img width="75%" src="img/problems_and_windows/session_window2.png">
+                    <aside class="notes">
+                        delayed element - what does it mean - over here it meant that the windows needed to be merged because the timespan was not long enough. Streaming frameworks can handle this for you
+                    </aside>
+                </section>
+                <section>
+                    <h2>Triggers</h2>
+                    <p>
+                        </br>
+                        These will trigger the window
+                    </p>
+                </section>
+                <section>
+                    <h2>Time Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/time_trigger.gif">
+                    <aside class="notes">
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Count Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/count_trigger.gif">
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>
+                <section>
+                    <h2>Content Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/interrupt_trigger.gif">
+                    <aside class="notes">
+                        A logout for example
+                    </aside>
+                </section>
+
+        
             </section>
 
             <section>
