@@ -505,7 +505,7 @@
                     <p>
                         Stateful </br>
                         Exactly-Once </br>
-                        
+                        ...
                     </p>
                     <aside class="notes">
                         
@@ -578,10 +578,92 @@
                     <img width="50%" src="img/flink/flink-header-logo.svg">    
                 </section>
                <section>
-                    <h2></h2>
-                    <aside class="notes"></aside>
+                    <h2>Apache Flink</h2>
+                    <h3>Native Stream Processor ( 100 ms)</h3>
+                    <aside class="notes">
+                        Native Stream Processor ( 100 ms)
+                        API very similar to Spark
+                        Statefull
+                        Exactly-Once
+                        Users: AliBaba, Zalando - less then Spark though 
+                        Started at TU Berlin
+                   </aside>
                 </section>
-                
+               <section>
+                    <h2>Apache Flink: Rich Features</h2>
+                    <p>
+                        Stateful </br>
+                        Exactly-Once </br>
+                        ...
+                    </p>
+                    <aside class="notes">
+                        
+                    
+                    </aside>
+                </section>
+               <section>
+                    <h2>Apache Flink: Stack</h2>
+                    <img width="70%" src="img/flink/stack.png">  
+                    <aside class="notes">
+                       
+                    
+                    </aside>
+                </section>
+               <section>
+                    <h2>Apache Flink: Architecture</h2>
+                    <img width="80%" src="img/flink/architecture.svg">  
+                    <aside class="notes">
+                    Job Managers: masters, coordinate the execution - 1 job manager is leader other standby
+                    Task Managers: the workersss
+                    
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Flink: Task Slots </h2>
+                    <img width="70%" src="img/flink/slot_sharing.svg">  
+                    <aside class="notes">
+                    Each worker is a JVM process - where you can determine the threads it can run jobs on with task slots.
+                    
+                    </aside>
+                </section>
+               <section>
+                    <h2>Apache Flink: DataStream </h2>
+                    <img width="70%" src="img/flink/program_dataflow.svg">  
+                    <aside class="notes">
+                    Basic building blocks are streams and transformation
+                    </aside>
+                </section>
+                 <section>
+                    <h2>Apache Flink: State Management</h2>
+                    <img width="50%" src="img/flink/state%20management.svg">  
+                    <aside class="notes">
+                      Flink will take regular checkpoints - this can also be tuned.
+                    </aside>
+                </section> 
+               <section>
+                    <h2>Apache Flink: State Management</h2>
+                    <img width="60%" src="img/flink/checkpoint_tuning.svg">  
+                    <aside class="notes">
+                      Flink will take regular checkpoints - this can also be tuned.
+                    </aside>
+                </section>
+               <section>
+                    <h2>Apache Flink: State Management</h2>
+                    <img width="50%" src="img/flink/rocksdb.svg">  
+                   <h3> RocksDB - Key/Value store</h3>
+                    <aside class="notes">
+                      Flink will take regular checkpoints - this can also be tuned.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Apache Flink: Back Pressure</h2>
+                    <img width="60%" src="img/flink/back_pressure.gif">  
+                    <aside class="notes">
+                      Buffers are passed along to workers.
+                        These buffers are allocated dynamically.
+                        These will also trigger back pressure
+                    </aside>
+                </section>
         
            </section>    
            <section>
@@ -590,8 +672,46 @@
                     <img width="50%" src="img/spring/icon-spring-cloud.svg">    
                 </section>
                <section>
-                    <h2></h2>
-                    <aside class="notes"></aside>
+                    <h2>Spring Cloud Stream: Use</h2>
+                    <img width="70%" src="img/spring/spring%20cloud%20stream.png">  
+                    <aside class="notes">
+                    Has Kafka support - also for Kafka Streams
+                   
+                   
+                   </aside>
+                </section>
+               <section>
+                    <h2>Spring Cloud Stream: Use</h2>
+                    <img width="80%" src="img/spring/application.png">  
+                    <aside class="notes">
+                    Has Kafka support - also for Kafka Streams
+                   
+                   
+                   </aside>
+                </section>
+               <section>
+                    <h2>Spring Cloud Stream: DIY</h2>
+                    
+                    <aside class="notes">
+                    You will have to do much more yourself.
+                   </aside>
+                </section>
+               <section>
+                    <h2>Spring Cloud Stream: DIY</h2>
+                    <img width="80%" src="img/spring/ikea.gif">  
+                    <aside class="notes">
+                    You will have to do much more yourself.
+                   </aside>
+                </section>
+               <section>
+                    <h2>Spring Cloud Stream: DIY - when</h2>
+                    
+                    <img width="80%" src="img/spring/faster.gif">  
+                   
+                    <h3> &lt; 500 events per second </h3>
+                    <aside class="notes">
+                    When you do not have to process that many elements - just write it yourself.
+                   </aside>
                 </section>
                 
         
