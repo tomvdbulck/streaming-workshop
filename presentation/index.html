@@ -34,12 +34,10 @@
             </section>
 
             <section>
-                <h2>Hi, my name is Tom.</h2>
+                <h2>Hi, we are Hans &#38; Tom.</h2>
                 <p>
-                    Developer<br />
+                    Developers<br />
                     Ordina Belgium<br />
-                    @tomvdbulck<br />
-                    https://github.com/tomvdbulck
                 </p>
             </section>
             
@@ -70,21 +68,9 @@
                     <h2>Why Streaming?</h2>
                 </section>
                 
+               
                 <section>
-                    <h2>Lambda Architecture</h2>
-                    <img width="75%" src="img/lambda_architecture.png">
-                    <aside class="notes">
-                    The lambda architecture 
-                        Nightly batch calculates data which is placed in a DB for quick retrieval
-                        Speed layer then calculates more recent data - again in another DB
-                        The service layer will then have to decide which information is the most truthfull
-                        (Speed layers might also use some guessing, ... )
-                        
-                        Originally: just streaming would not be correct 
-                    </aside>
-                </section>
-                <section>
-                    <img width="75%" src="img/EveryMinuteInternet.png">
+                    <img width="65%" src="img/EveryMinuteInternet.png">
                     <aside class="notes">
                          IOT
                          Clickstreams
@@ -125,6 +111,7 @@
                     Realtime     
                     </aside>    
                 </section>
+                 
                  <section>
                     <h2>Streaming: Endless &#38; Continuous Data</h2>
                     
@@ -133,6 +120,19 @@
                         Speed &#38; Realtime <br/>
                         Distributed &#38; Scalable <br/>
                     </p> 
+                </section>
+                <section>
+                    <h2>Lambda Architecture</h2>
+                    <img width="75%" src="img/lambda_architecture.png">
+                    <aside class="notes">
+                    The lambda architecture 
+                        Nightly batch calculates data which is placed in a DB for quick retrieval
+                        Speed layer then calculates more recent data - again in another DB
+                        The service layer will then have to decide which information is the most truthfull
+                        (Speed layers might also use some guessing, ... )
+                        
+                        Originally: just streaming would not be correct 
+                    </aside>
                 </section>
              </section> 
             <section>
@@ -212,6 +212,30 @@
                         Since this data is unbouned => on a window
                     </aside>
                 </section>
+                
+                <section>
+                    <h2>Filter</h2> 
+                    <img width="60%" src="img/ignore.gif">
+                </section>
+                <section>
+                    <h2>Filter</h2> 
+                    <img width="80%" src="img/LHC_BTN_V2.png">
+                </section>
+                <section>
+                    <h2>Transform</h2> 
+                    <img width="60%" src="img/transform.gif">
+                </section>
+                
+                <section>
+                    <h2>Group</h2> 
+                    <img width="60%" src="img/group.gif">
+                </section>
+
+                <section>
+                    <h2>Aggregate</h2> 
+                    <h3>COUNT()</h3>
+                    <h3>SUM()</h3>
+                </section>
             
                 <section>
                     <h2>Windows </h2> 
@@ -284,6 +308,10 @@
                         These triggers can be combined off course
                     </aside>
                 </section>
+                <section>
+                    <h2>Content Triggers</h2>
+                    <h3> Just Combine</h3>
+                </section>
 
                 <section>
                     <h2>The dataflow model</h2>
@@ -343,6 +371,14 @@
                         Discard old results</br>
                         Accumulate all results</br>
                         Accumulate and Retract: both accumulation and retraction</br>
+                    </p>
+                </section>  
+                <section>
+                    <h2>Accumulate Results: example - user monitoring</h2>    
+                    <p>
+                        Discard old results - current load on our system</br>
+                        Accumulate all results - total load of the day</br>
+                        Accumulate and Retract - total load of the last hour</br>
                     </p>
                 </section>  
                 
@@ -695,13 +731,7 @@
                    
                    </aside>
                 </section>
-               <section>
-                    <h2>Spring Cloud Stream: DIY</h2>
-                    
-                    <aside class="notes">
-                    You will have to do much more yourself.
-                   </aside>
-                </section>
+
                <section>
                     <h2>Spring Cloud Stream: DIY</h2>
                     <img width="80%" src="img/spring/ikea.gif">  
@@ -824,22 +854,12 @@
             </section>
     
 
-            <section>
-                <section>
-                    <h2>Questions ?</h2>
-
-                </section>
-            </section>
-
-
-
-
             <!-- **********
                 DO NOT REMOVE
             ********** -->
             <section style="text-align: left;">
                 <h2>Thanks for watching!</h2>
-                <p class="fragment">Now kick some ass!</p>
+                <h3>Hans &#38; Tom</h3>
             </section>
 
             <section style="text-align: left;" data-background="img/jworks-wallpaper-3.jpg"></section>
