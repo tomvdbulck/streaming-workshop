@@ -51,6 +51,15 @@ public class TestConvertXmlToDomain {
 
         assertEquals(4254, sensorDataList.size());
 
+
+        SensorData sensorData = sensorDataList.get(0);
+        assertEquals("3640", sensorData.getUniekeId());
+        assertEquals("H291L10", sensorData.getSensorDescriptiveId());
+        assertEquals("Parking Kruibeke", sensorData.getName());
+        assertEquals("A0140002", sensorData.getIdent8());
+        assertEquals("R10", sensorData.getTrafficLane());
+
+
     }
 
     @Test

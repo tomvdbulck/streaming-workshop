@@ -1,6 +1,11 @@
 package be.ordina.workshop.streaming.opendatatraffic.domain;
 
+import lombok.Data;
+
+@Data
 public class SensorData {
+
+    private String uniekeId;
 
     /*
     MeetpuntId
@@ -9,7 +14,7 @@ public class SensorData {
     /*
     Meetpunt beschrijvende Id
      */
-    private Integer sensorDescriptiveId;
+    private String sensorDescriptiveId;
 
     private String name;
 

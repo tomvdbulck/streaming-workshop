@@ -1,7 +1,10 @@
 package be.ordina.workshop.streaming.opendatatraffic.domain;
 
+import lombok.Data;
+
 import java.util.Date;
 
+@Data
 public class TrafficEvent {
 
     private VehicleClass vehicleClass;
