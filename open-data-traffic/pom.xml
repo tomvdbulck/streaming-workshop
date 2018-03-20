@@ -84,17 +84,32 @@
 				<version>1.6</version>
 				<executions>
 					<execution>
-						<id>xjc</id>
+						<id>xjc-traffic-data</id>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+							<schemaDirectory>${project.basedir}/src/main/resources/xsd/traffic</schemaDirectory>
+							<packageName>generated.traffic</packageName>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>xjc-config-data</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>${project.basedir}/src/main/resources/xsd/config</schemaDirectory>
+							<packageName>generated.config</packageName>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<schemaDirectory>${project.basedir}/src/main/resources/xsd</schemaDirectory>
-					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-					<clearOutputDir>false</clearOutputDir>
-				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>
