@@ -10,7 +10,8 @@ public enum VehicleClass {
     CAR(2),
     CAMIONET(3),
     RIGGID_LORRIES(4),
-    TRUCK_OR_BUS(5);
+    TRUCK_OR_BUS(5),
+    UNKNOWN(0);
 
 
     private final int value;

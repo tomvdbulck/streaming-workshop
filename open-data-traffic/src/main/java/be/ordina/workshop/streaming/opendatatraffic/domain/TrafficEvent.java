@@ -39,11 +39,11 @@ public class TrafficEvent {
     /*
     MeetpuntId
      */
-    private Integer sensorId;
+    private String sensorId;
     /*
     Meetpunt beschrijvende Id
      */
-    private Integer sensorDescriptiveId;
+    private String sensorDescriptiveId;
 
     private Integer lveNumber;
     private Date timeRegistration;

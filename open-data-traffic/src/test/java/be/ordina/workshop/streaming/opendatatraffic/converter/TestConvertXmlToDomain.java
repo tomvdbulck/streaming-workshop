@@ -33,7 +33,8 @@ public class TestConvertXmlToDomain {
 
         List<TrafficEvent> trafficEvents = converter.trafficMeasurements(miv.getMeetpunt());
 
-        assertEquals(4254, trafficEvents.size());
+        assertEquals(21270, trafficEvents.size());
+
 
     }
 

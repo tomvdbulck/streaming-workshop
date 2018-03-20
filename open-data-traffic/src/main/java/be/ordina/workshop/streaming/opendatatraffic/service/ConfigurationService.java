@@ -26,7 +26,7 @@ public class ConfigurationService {
     private final ConvertXmlToDomain converter;
 
     @Autowired
-    public ConfigurationService(ConvertXmlToDomain convertXmlToDomain) {
+    public ConfigurationService(final ConvertXmlToDomain convertXmlToDomain) {
 
         sensorDataHashMap = new HashMap<>();
 
