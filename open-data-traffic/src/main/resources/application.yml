@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    stream:
+      binders:
+        kafka1:
+          type: kafka
+          defaultCandidate: true
