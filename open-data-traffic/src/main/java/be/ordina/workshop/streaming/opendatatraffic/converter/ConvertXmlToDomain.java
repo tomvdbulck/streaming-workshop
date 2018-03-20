@@ -44,6 +44,10 @@ public class ConvertXmlToDomain {
                     trafficEvent.setRecentData(false);
                 }
 
+                trafficEvent.setTimeRegistration(meetpunt.getTijdWaarneming().toGregorianCalendar().getTime());
+                trafficEvent.setLastUpdated(meetpunt.getTijdLaatstGewijzigd().toGregorianCalendar().getTime());
+
+
                 //trafficEvent.setSensorDefect();
                 trafficEvent.setSensorId(meetpunt.getUniekeId());
                 trafficEvent.setSensorDescriptiveId(meetpunt.getBeschrijvendeId());
@@ -63,15 +67,6 @@ public class ConvertXmlToDomain {
 
                 events.add(trafficEvent);
             }
-
-
-
-
-
-
-
-
-
 
         }
 
