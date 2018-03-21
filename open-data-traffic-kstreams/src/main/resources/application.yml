@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    stream:
+      binders:
+        kafka1:
+          type: kafka
+          defaultCandidate: true
+      bindings:
+        output:
+          content-type: application/json
+        input:
+          content-type: application/json
+

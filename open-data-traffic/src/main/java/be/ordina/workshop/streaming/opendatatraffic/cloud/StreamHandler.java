@@ -33,6 +33,7 @@ public class StreamHandler {
         this.inputChannels = channels;
 
         subScribeOnChannel();
+        subScribeOnKStreamsChannel();
 
         this.lowestWithTraffic = new HashMap<>();
         this.highestWithTraffic = new HashMap<>();
@@ -77,6 +78,25 @@ public class StreamHandler {
 
 
         inputChannels.trafficEvents().subscribe(messageHandler);
+    }
+
+
+
+
+    private void subScribeOnKStreamsChannel() {
+
+
+        this.messages = new ArrayList<>();
+
+        messageHandler = (message -> {
+            log.info("retrieved message " + message.getPayload().toString());
+
+
+
+        });
+
+
+        inputChannels.ouputKStreams().subscribe(messageHandler);
     }
 
     public List<TrafficEvent> getMessages() {

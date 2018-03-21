@@ -25,6 +25,8 @@ public class CloudProducer {
         trafficEventList.forEach(m -> {
             //log.info("send message: " + m + " to trafficEvents");
             outputChannels.trafficEvents().send(MessageBuilder.withPayload(m).build());
+
+            outputChannels.trafficEventsKStream().send(MessageBuilder.withPayload(m).build());
         }
         );
 
