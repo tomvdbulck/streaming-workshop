@@ -23,14 +23,14 @@ public class StreamHandler {
 
 
 
-    private final InputChannels inputChannels;
+    private final Channels inputChannels;
 
     private MessageHandler messageHandler;
 
     @Autowired
-    public StreamHandler(InputChannels inputChannels) {
+    public StreamHandler(Channels channels) {
         this.messages = new ArrayList<>();
-        this.inputChannels = inputChannels;
+        this.inputChannels = channels;
 
         subScribeOnChannel();
 

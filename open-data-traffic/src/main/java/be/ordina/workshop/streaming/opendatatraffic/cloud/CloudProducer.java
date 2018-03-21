@@ -13,11 +13,11 @@ import java.util.List;
 @Slf4j
 public class CloudProducer {
 
-    private final OutputChannels outputChannels;
+    private final Channels outputChannels;
 
     @Autowired
-    public CloudProducer(final OutputChannels outputChannels) {
-        this.outputChannels = outputChannels;
+    public CloudProducer(final Channels channels) {
+        this.outputChannels = channels;
     }
 
     public void sendMessages(List<TrafficEvent> trafficEventList) {
