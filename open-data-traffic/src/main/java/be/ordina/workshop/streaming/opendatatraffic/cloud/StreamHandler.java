@@ -1,5 +1,6 @@
 package be.ordina.workshop.streaming.opendatatraffic.cloud;
 
+import be.ordina.workshop.streaming.opendatatraffic.domain.TrafficEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHandler;
@@ -12,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class StreamHandler {
 
-    private List<String> messages;
+    private List<TrafficEvent> messages;
     private final InputChannels inputChannels;
 
     private MessageHandler messageHandler;
@@ -31,17 +32,18 @@ public class StreamHandler {
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
-            log.info("retrieved message " + message.getPayload());
-            messages.add((String) message.getPayload());
+            log.info("retrieved message " + message.getPayload().toString());
+            log.info(" the sensor id is " + ((TrafficEvent) message.getPayload()).getSensorId());
+            messages.add((TrafficEvent) message.getPayload());
         });
 
 
         inputChannels.trafficEvents().subscribe(messageHandler);
     }
 
-    public List<String> getMessages() {
+    public List<TrafficEvent> getMessages() {
 
-        List<String> messagesToReturn = new ArrayList<>();
+        List<TrafficEvent> messagesToReturn = new ArrayList<>();
 
         if (messageHandler != null) {
             inputChannels.trafficEvents().unsubscribe(messageHandler);

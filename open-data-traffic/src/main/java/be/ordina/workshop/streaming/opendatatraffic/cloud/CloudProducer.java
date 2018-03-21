@@ -31,7 +31,7 @@ public class CloudProducer {
     }
 
     public void sendMessage(TrafficEvent trafficEvent) {
-        outputChannels.trafficEvents().send(MessageBuilder.withPayload(trafficEvent.getSensorDescriptiveId()).build());
+        outputChannels.trafficEvents().send(MessageBuilder.withPayload(trafficEvent).build());
 
     }
 

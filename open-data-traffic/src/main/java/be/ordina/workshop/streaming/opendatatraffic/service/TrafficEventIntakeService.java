@@ -39,9 +39,9 @@ public class TrafficEventIntakeService implements ApplicationRunner {
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
         for (int i = 0;  i<3 ; i ++) {
-            Thread.sleep(1000l);
-
             putEventsInKafka();
+
+            Thread.sleep(10000l);
         }
 
     }

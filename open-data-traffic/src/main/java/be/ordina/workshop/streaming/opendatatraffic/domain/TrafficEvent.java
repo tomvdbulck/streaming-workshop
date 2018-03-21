@@ -1,5 +1,6 @@
 package be.ordina.workshop.streaming.opendatatraffic.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Data;
 
 import java.util.Date;
