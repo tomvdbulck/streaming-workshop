@@ -7,6 +7,7 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -14,6 +15,14 @@ import java.util.List;
 public class StreamHandler {
 
     private List<TrafficEvent> messages;
+
+    private final HashMap<String, TrafficEvent> lowestWithTraffic;
+
+
+    private final HashMap<String, TrafficEvent> highestWithTraffic;
+
+
+
     private final InputChannels inputChannels;
 
     private MessageHandler messageHandler;
@@ -24,6 +33,9 @@ public class StreamHandler {
         this.inputChannels = inputChannels;
 
         subScribeOnChannel();
+
+        this.lowestWithTraffic = new HashMap<>();
+        this.highestWithTraffic = new HashMap<>();
     }
 
     private void subScribeOnChannel() {
@@ -32,9 +44,35 @@ public class StreamHandler {
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
-            log.info("retrieved message " + message.getPayload().toString());
-            log.info(" the sensor id is " + ((TrafficEvent) message.getPayload()).getSensorId());
-            messages.add((TrafficEvent) message.getPayload());
+            //log.info("retrieved message " + message.getPayload().toString());
+
+
+            TrafficEvent event = (TrafficEvent) message.getPayload();
+
+            //log.info(" the sensor id is " + event.getSensorId());
+
+
+            if (event.getVehicleSpeedCalculated() > 0) {
+
+                if (lowestWithTraffic.get(event.getSensorId()) == null || lowestWithTraffic.get(event.getSensorId()).getVehicleSpeedCalculated() > event.getVehicleSpeedCalculated()) {
+                    lowestWithTraffic.put(event.getSensorId(), event);
+
+                    log.info("Updated lowestWithTraffic for sensor {} with an event with speed {} for vehicle {} ", event.getSensorData().getName() + " " + event.getSensorData().getTrafficLane()
+                            , event.getVehicleSpeedCalculated(), event.getVehicleClass().name());
+                }
+
+                if (highestWithTraffic.get(event.getSensorId()) == null || highestWithTraffic.get(event.getSensorId()).getVehicleSpeedCalculated() < event.getVehicleSpeedCalculated()) {
+                    highestWithTraffic.put(event.getSensorId(), event);
+
+                    log.info("Updated highestTraffic for sensor {} with an event with speed {} for vehicle {} ", event.getSensorData().getName() + " " + event.getSensorData().getTrafficLane()
+                            , event.getVehicleSpeedCalculated(), event.getVehicleClass().name());
+                }
+
+
+                messages.add(event);
+
+            }
+
         });
 
 
@@ -55,6 +93,15 @@ public class StreamHandler {
 
 
         return messagesToReturn;
+    }
+
+
+    public HashMap<String, TrafficEvent> getLowestWithTraffic() {
+        return lowestWithTraffic;
+    }
+
+    public HashMap<String, TrafficEvent> getHighestWithTraffic() {
+        return highestWithTraffic;
     }
 
 }

@@ -35,6 +35,7 @@ public class TrafficEventIntakeService implements ApplicationRunner {
         log.info("put Events in Kafka");
         readInSensorDataService.readInData().forEach(m -> {
             if (configurationService.getSensorIdsToProcess().contains(m.getSensorId())) {
+                m.setSensorData(configurationService.getSensorDataHashMap().get(m.getSensorId()));
                 cloudProducer.sendMessage(m);
             }
         });
@@ -45,10 +46,10 @@ public class TrafficEventIntakeService implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
-        for (int i = 0;  i<3 ; i ++) {
+        for (int i = 0;  i<50 ; i ++) {
             putEventsInKafka();
 
-            Thread.sleep(10000l);
+            Thread.sleep(30000l);
         }
 
     }

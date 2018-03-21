@@ -23,7 +23,7 @@ public class CloudProducer {
     public void sendMessages(List<TrafficEvent> trafficEventList) {
 
         trafficEventList.forEach(m -> {
-            log.info("send message: " + m + " to trafficEvents");
+            //log.info("send message: " + m + " to trafficEvents");
             outputChannels.trafficEvents().send(MessageBuilder.withPayload(m).build());
         }
         );
