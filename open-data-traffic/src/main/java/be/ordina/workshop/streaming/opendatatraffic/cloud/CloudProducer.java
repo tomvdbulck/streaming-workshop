@@ -3,7 +3,9 @@ package be.ordina.workshop.streaming.opendatatraffic.cloud;
 
 import be.ordina.workshop.streaming.opendatatraffic.domain.TrafficEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +36,6 @@ public class CloudProducer {
 
     public void sendMessage(TrafficEvent trafficEvent) {
         outputChannels.trafficEvents().send(MessageBuilder.withPayload(trafficEvent).build());
-
     }
 
 }

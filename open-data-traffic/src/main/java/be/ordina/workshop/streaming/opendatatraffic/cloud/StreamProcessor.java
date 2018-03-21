@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-//@Component
+@Component
 @Slf4j
-//@EnableAutoConfiguration
+@EnableAutoConfiguration
 //@EnableBinding(KafkaStreamsProcessor.class)
 public class StreamProcessor {
 
 
-    @StreamListener("trafficEventsKStream")
-    @SendTo("ouputKStreams")
+    @StreamListener("input")
+    @SendTo("output")
     public KStream<?, String> process(KStream<?, TrafficEvent> input) {
 
 
@@ -38,8 +38,10 @@ public class StreamProcessor {
                 .map((w, c) -> new KeyValue<>(null, "Count for " + w.key() + ": " + c));
     }
 
-    @StreamListener("trafficEvents")
-    public void sink(String input) {
-        System.out.println("FOOBAR -- " + input);
+    @StreamListener("output")
+    public void sink(TrafficEvent input) {
+        log.info("FOOBAR -- " + input);
     }
+
+
 }

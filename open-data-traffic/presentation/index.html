@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>JWorks - Streaming Frameworks</title>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/ordina.css" id="theme">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <script src="js/head.min.js"></script>
+    <!--Add support for earlier versions of Internet Explorer -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Streaming Traffic</h1>
+                <img src="img/jworks-logo.png" style="vertical-align: bottom;" width="22.5%"/>
+            </section>
+
+            
+            
+
+            <!-- **********
+                EDIT FROM HERE
+            ********** -->
+            <section>
+                <h2>Agenda</h2>
+                <ul>
+                    <li>Open Data?</li>
+                    <li>Spring Cloud Stream: intake and basic processing</li>
+                    <li>Issues with this Approach</li>
+                </ul>
+            </section>
+
+            <!-- Example of nested vertical slides -->
+            <section>
+                <section>
+                    <h2>Open Data?</h2>
+                </section>
+                
+               
+                <section>
+                    <img width="75%" src="img/opendata.png">
+                </section>
+                <section>
+                    <img width="65%" src="img/files.png"> 
+                </section>
+                
+                <section>
+                    <h2>XML</h2>
+                    <img width="100%" src="img/xml_traffic.png">   
+                </section>
+                
+             </section> 
+            
+            <section>
+                <section>
+                    <h2>Ingestion</h2>
+                    
+                    <h3>Some code</h3>
+                </section>
+                
+                
+             </section> 
+           
+            <section>
+                <section>
+                    <h2>Stream Operations </h2> 
+                </section>
+                <section>
+                    <h2>Stream Operations </h2> 
+                    <p>
+                        Filter &#38; Transform </br>
+                        Group </br>
+                        Aggregate </br>
+                        Windows </br>
+                    </p>
+                    <aside class="notes">
+                        Filter and Transform events.
+                        Group based on a key.
+                        
+                        Aggregate Like sum and count.
+                        Since this data is unbouned => on a window
+                    </aside>
+                </section>
+                
+                <section>
+                    <h2>Filter</h2> 
+                    <img width="60%" src="img/ignore.gif">
+                </section>
+                <section>
+                    <h2>Transform</h2> 
+                    <img width="60%" src="img/transform.gif">
+                </section>
+                
+                <section>
+                    <h2>Group</h2> 
+                    <img width="60%" src="img/group.gif">
+                </section>
+
+                <section>
+                    <h2>Aggregate</h2> 
+                    <h3>COUNT()</h3>
+                    <h3>SUM()</h3>
+                </section>
+            
+                <section>
+                    <h2>Windows </h2> 
+                    <p>
+                        Tumbling Windows </br>
+                        Sliding Windows  </br>
+                        Session Windows  </br>
+                    
+                    </p>
+                    <aside class="notes">
+                        Tumbling Window 
+                        Sliding Window
+                        Session Window
+                        Time Trigger
+                        Count Trigger
+                        Content Trigger
+                    </aside>
+                </section>
+                <section>
+                    <h2>Tumbling &#38; Sliding Windows</h2> 
+                    <img width="85%" src="img/problems_and_windows/tumbling_sliding.png">
+                    <aside class="notes">
+                        Tumbling - just folds over, no overlapping
+                        
+                        Sliding - 4 second window is moved every 2 seconds
+                    </aside>
+                </section>
+                <section>
+                    <h2>Session Windows</h2> 
+                    <img width="75%" src="img/problems_and_windows/session_window1.png">
+                    <aside class="notes">
+                        every element is taken by a key - by a user for example
+                    </aside>
+                </section>
+                <section>
+                    <h2>Session Windows</h2> 
+                    <img width="75%" src="img/problems_and_windows/session_window2.png">
+                    <aside class="notes">
+                        delayed element - what does it mean - over here it meant that the windows needed to be merged because the timespan was not long enough. Streaming frameworks can handle this for you
+                    </aside>
+                </section>
+                
+                <section>
+                    <h2>Triggers</h2>
+                    <p>
+                        </br>
+                        These will trigger the window
+                    </p>
+                </section>
+                <section>
+                    <h2>Content Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/interrupt_trigger.gif">
+                    <aside class="notes">
+                        A logout for example
+                        
+                        These triggers can be combined off course
+                    </aside>
+                </section>
+                <section>
+                    <h2>Time Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/time_trigger.gif">
+                    <aside class="notes">
+                        Can be on events / processing time / ... 
+                    </aside>
+                </section>
+                <section>
+                    <h2>Count Triggers</h2>
+                    <img width="70%" src="img/problems_and_windows/count_trigger.gif">
+                    <aside class="notes">
+                        
+                    </aside>
+                </section>  
+                
+                <section>
+                    <h2>Accumulate Results</h2>    
+                    <p>
+                        Discard old results</br>
+                        Accumulate all results</br>
+                        Accumulate and Retract: both accumulation and retraction</br>
+                    </p>
+                </section>  
+                <section>
+                    <h2>Accumulate Results: example - user monitoring</h2>    
+                    <p>
+                        Discard old results - current load on our system</br>
+                        Accumulate all results - total load of the day</br>
+                        Accumulate and Retract - total load of the last hour</br>
+                    </p>
+                </section>  
+   
+        
+            </section>
+
+            <section>
+                <section>
+                    <h2>Real Event Stream Processing</h2>
+                </section>
+                <section>
+                    <h2>Kafka Streams</h2>
+                    <img width="50%" src="img/kafka_logo.png">
+                
+                </section>
+                <section>
+                    <h2>Spark</h2>
+                    <img width="50%" src="img/spark-logo-trademark.png">
+                
+                </section>
+                <section>
+                    <h2>Storm</h2>
+                    <img width="50%" src="img/storm-logo.png">
+                
+                </section>
+        
+           </section>
+         
+
+      
+
+    
+
+            <!-- **********
+                DO NOT REMOVE
+            ********** -->
+            <section style="text-align: left;">
+                <h2>Thanks for watching!</h2>
+                <h3>Tom</h3>
+            </section>
+
+            <section style="text-align: left;" data-background="img/jworks-wallpaper-3.jpg"></section>
+        </div>
+    </div>
+    <script src="js/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            transition: 'convex',
+            dependencies: [
+                // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+                {
+                    src: 'lib/js/classList.js',
+                    condition: function () {
+                        return !document.body.classList;
+                    }
+                },
+                // Interpret Markdown in <section> elements
+                {
+                    src: 'plugin/markdown/marked.js',
+                    condition: function() {
+                        return !!document.querySelector( '[data-markdown]' );
+                    }
+                },
+                {
+                    src: 'plugin/markdown/markdown.js',
+                    condition: function() {
+                        return !!document.querySelector( '[data-markdown]' );
+                    }
+                },
+                // Syntax highlight for <code> elements
+                {
+                    src: 'plugin/highlight/highlight.js',
+                    async: true,
+                    callback: function () {
+                        hljs.initHighlightingOnLoad();
+                    }
+                },
+                // Zoom in and out with Alt+click
+                {
+                    src: 'plugin/zoom-js/zoom.js',
+                    async: true
+                },
+                // Speaker notes
+                {
+                    src: 'plugin/notes/notes.js',
+                    async: true
+                }
+        ]
+        });
+    </script>
+</body>
+
+</html>
