@@ -13,7 +13,7 @@ public class ConfigurationServiceTest {
 
 
     @Before
-    public void setup() {
+    public void setup() throws  Exception{
         configurationService = new ConfigurationService(new ConvertXmlToDomain());
     }
 
@@ -24,6 +24,17 @@ public class ConfigurationServiceTest {
 
         Assert.assertThat(configurationService.getSensorDataHashMap().size(), Is.is(4254));
         Assert.assertThat(configurationService.getSensorDataHashMap().get("3640").getName(), Is.is("Parking Kruibeke"));
+
+        Assert.assertThat(configurationService.getSensorIdsToProcess().size(), Is.is(23));
+
+    }
+
+    @Test
+    public void testLoadInSensorIdsToProcess() throws Exception{
+
+        configurationService.setupSensors();
+
+        Assert.assertThat(configurationService.getSensorIdsToProcess().size(), Is.is(23));
 
     }
 }

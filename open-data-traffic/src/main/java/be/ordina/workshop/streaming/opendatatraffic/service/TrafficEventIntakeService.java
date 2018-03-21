@@ -2,35 +2,42 @@ package be.ordina.workshop.streaming.opendatatraffic.service;
 
 
 import be.ordina.workshop.streaming.opendatatraffic.cloud.CloudProducer;
-import be.ordina.workshop.streaming.opendatatraffic.domain.TrafficEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 @Component
 @Slf4j
 public class TrafficEventIntakeService implements ApplicationRunner {
 
     private final ReadInSensorDataService readInSensorDataService;
+    private final ConfigurationService configurationService;
 
     private final CloudProducer cloudProducer;
 
+
     @Autowired
-    public TrafficEventIntakeService(final ReadInSensorDataService readInSensorDataService, final CloudProducer cloudProducer) {
+    public TrafficEventIntakeService(final ReadInSensorDataService readInSensorDataService, final CloudProducer cloudProducer, final ConfigurationService configurationService){
 
         this.readInSensorDataService = readInSensorDataService;
         this.cloudProducer = cloudProducer;
 
+        this.configurationService = configurationService;
+
     }
+
+
 
 
     public void putEventsInKafka() throws Exception {
         log.info("put Events in Kafka");
-        readInSensorDataService.readInData().forEach(m -> {cloudProducer.sendMessage(m);});
+        readInSensorDataService.readInData().forEach(m -> {
+            if (configurationService.getSensorIdsToProcess().contains(m.getSensorId())) {
+                cloudProducer.sendMessage(m);
+            }
+        });
 
         log.info("completed putting Events in Kafka");
     }
