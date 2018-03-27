@@ -10,6 +10,9 @@ public class TrafficEvent {
 
     private VehicleClass vehicleClass;
 
+    /*
+    This is the vehicleCount.
+     */
     private Integer trafficIntensity;
 
     private SensorData sensorData;

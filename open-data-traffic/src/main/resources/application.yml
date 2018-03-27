@@ -10,4 +10,9 @@ spring:
           content-type: application/json
         input:
           content-type: application/json
+logging:
+  path: '/Users/ToVn/elk/logstash/spring-boot/'
+  file:
+    max-history: 10
+  level: TRACE
 

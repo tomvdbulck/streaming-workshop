@@ -3,6 +3,7 @@ package be.ordina.workshop.streaming.opendatatraffic.service;
 
 import be.ordina.workshop.streaming.opendatatraffic.cloud.CloudProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.omg.SendingContext.RunTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -46,11 +47,21 @@ public class TrafficEventIntakeService implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
-        for (int i = 0;  i<50 ; i ++) {
+        for (int i = 0;  i<500 ; i ++) {
             putEventsInKafka();
 
-            Thread.sleep(30000l);
+            if (i%5 == 0) {
+                try {
+                   throw new RuntimeException("We diveded by 5", new NumberFormatException("i is diveded by 5") );
+                } catch (RuntimeException e) {
+                    log.error("A random exception is thrown", e);
+                }
+            }
+
+            Thread.sleep(10000l);
         }
+
+
 
     }
 }

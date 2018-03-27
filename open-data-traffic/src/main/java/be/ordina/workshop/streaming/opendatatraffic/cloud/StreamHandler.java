@@ -17,9 +17,9 @@ public class StreamHandler {
     private List<TrafficEvent> messages;
 
     private final HashMap<String, TrafficEvent> lowestWithTraffic;
-
-
     private final HashMap<String, TrafficEvent> highestWithTraffic;
+
+    private final HashMap<String, Integer> vehicleCount;
 
 
 
@@ -37,6 +37,7 @@ public class StreamHandler {
 
         this.lowestWithTraffic = new HashMap<>();
         this.highestWithTraffic = new HashMap<>();
+        this.vehicleCount = new HashMap<>();
     }
 
     private void subScribeOnChannel() {
@@ -45,12 +46,29 @@ public class StreamHandler {
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
-            //log.info("retrieved message " + message.getPayload().toString());
+            log.info("retrieved message " + message.getPayload().toString());
 
 
             TrafficEvent event = (TrafficEvent) message.getPayload();
 
-            //log.info(" the sensor id is " + event.getSensorId());
+            log.info(" the sensor id is " + event.getSensorId());
+
+
+            if (event.getTrafficIntensity() > 0) {
+                log.info("We now have {} vehicles on the road {} for lane:{}", event.getTrafficIntensity(), event.getSensorData().getName(), event.getSensorData().getTrafficLane());
+
+
+                int vehicleCountForEvent = event.getTrafficIntensity();
+
+                if (vehicleCount.get(event.getSensorId()) != null) {
+                    vehicleCountForEvent += vehicleCount.get(event.getSensorId());
+                }
+
+                log.info("We now had total: {} vehicles on road: {} for lane: {}", vehicleCountForEvent, event.getSensorData().getName(), event.getSensorData().getTrafficLane());
+
+
+                vehicleCount.put(event.getSensorId(), vehicleCountForEvent);
+            }
 
 
             if (event.getVehicleSpeedCalculated() > 0) {
