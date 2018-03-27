@@ -58,7 +58,7 @@ public class TrafficEventIntakeService implements ApplicationRunner {
                 }
             }
 
-            Thread.sleep(10000l);
+            Thread.sleep(60000l);
         }
 
 
