@@ -44,6 +44,7 @@ public class StreamHandler {
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
+            log.info("retrieved message with header " + message.getHeaders().toString());
             log.info("retrieved message " + message.getPayload().toString());
 
             TrafficEvent event = (TrafficEvent) message.getPayload();

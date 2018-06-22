@@ -1,4 +1,4 @@
-package be.ordina.workshop.streaming.spring.springkafka.be.ordina.workshop.streaming.spring.springkafka.domain;
+package be.ordina.workshop.streaming.spring.springkafka.domain;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package be.ordina.workshop.streaming.spring.springkafka.be.ordina.workshop.streaming.spring.springkafka.service;
+package be.ordina.workshop.streaming.spring.springkafka.service;
 
 
 /**
