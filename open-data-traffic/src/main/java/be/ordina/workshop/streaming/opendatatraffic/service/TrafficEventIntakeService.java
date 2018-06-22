@@ -50,14 +50,6 @@ public class TrafficEventIntakeService implements ApplicationRunner {
         for (int i = 0;  i<500 ; i ++) {
             putEventsInKafka();
 
-            if (i%5 == 0) {
-                try {
-                   throw new RuntimeException("We diveded by 5", new NumberFormatException("i is diveded by 5") );
-                } catch (RuntimeException e) {
-                    log.error("A random exception is thrown", e);
-                }
-            }
-
             Thread.sleep(60000l);
         }
 
