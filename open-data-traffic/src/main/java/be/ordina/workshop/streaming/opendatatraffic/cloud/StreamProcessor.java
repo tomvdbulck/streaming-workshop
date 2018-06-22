@@ -21,8 +21,8 @@ import java.util.Arrays;
 public class StreamProcessor {
 
 
-    //@StreamListener("input")
-    //@SendTo("output")
+    //@StreamListener("trafficEvents")
+    //@SendTo("stream-output")
     public KStream<?, String> process(KStream<?, TrafficEvent> input) {
 
 

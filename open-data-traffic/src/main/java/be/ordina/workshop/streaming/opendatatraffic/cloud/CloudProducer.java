@@ -21,6 +21,10 @@ public class CloudProducer {
 
     public void sendMessage(TrafficEvent trafficEvent) {
         outputChannels.trafficEvents().send(MessageBuilder.withPayload(trafficEvent).build());
+
+
+        log.info("Send message to the trafficEventOutput channel");
+        outputChannels.trafficEventsOutput().send(MessageBuilder.withPayload(trafficEvent).build());
     }
 
 }

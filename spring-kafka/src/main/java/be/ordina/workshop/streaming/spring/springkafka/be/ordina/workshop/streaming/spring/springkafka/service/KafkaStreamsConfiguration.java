@@ -52,7 +52,7 @@ public class KafkaStreamsConfiguration {
 
         System.out.println(">>>>>>>>>>>>>> enter kstream");
 
-        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEvents", Consumed.with(Serdes.String(), new JsonSerde<>(TrafficEvent.class)));
+        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new JsonSerde<>(TrafficEvent.class)));
 
         KStream<Windowed<String>, Integer> countedSensorStream = stream.map(new SensorKeyValueMapper())
                 .groupByKey()
