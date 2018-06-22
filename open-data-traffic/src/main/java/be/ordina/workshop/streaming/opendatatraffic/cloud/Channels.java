@@ -11,9 +11,6 @@ public interface Channels {
     @Input
     SubscribableChannel trafficEvents();
 
-    @Input
-    SubscribableChannel trafficEventsKStream();
-
     @Output
     SubscribableChannel ouputKStreams();
 

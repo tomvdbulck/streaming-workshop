@@ -50,7 +50,7 @@ public class TrafficEventIntakeService implements ApplicationRunner {
         for (int i = 0;  i<500 ; i ++) {
             putEventsInKafka();
 
-            Thread.sleep(60000l);
+            Thread.sleep(6000l);
         }
 
 

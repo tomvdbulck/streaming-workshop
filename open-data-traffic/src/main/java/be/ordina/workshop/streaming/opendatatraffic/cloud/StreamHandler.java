@@ -41,22 +41,17 @@ public class StreamHandler {
     }
 
     private void subScribeOnChannel() {
-
-
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
             log.info("retrieved message " + message.getPayload().toString());
 
-
             TrafficEvent event = (TrafficEvent) message.getPayload();
 
             log.info(" the sensor id is " + event.getSensorId());
 
-
             if (event.getTrafficIntensity() > 0) {
                 log.info("We now have {} vehicles on the road {} for lane:{}", event.getTrafficIntensity(), event.getSensorData().getName(), event.getSensorData().getTrafficLane());
-
 
                 int vehicleCountForEvent = event.getTrafficIntensity();
 
@@ -66,13 +61,11 @@ public class StreamHandler {
 
                 log.info("We now had total: {} vehicles on road: {} for lane: {}", vehicleCountForEvent, event.getSensorData().getName(), event.getSensorData().getTrafficLane());
 
-
                 vehicleCount.put(event.getSensorId(), vehicleCountForEvent);
             }
 
 
             if (event.getVehicleSpeedCalculated() > 0) {
-
                 if (lowestWithTraffic.get(event.getSensorId()) == null || lowestWithTraffic.get(event.getSensorId()).getVehicleSpeedCalculated() > event.getVehicleSpeedCalculated()) {
                     lowestWithTraffic.put(event.getSensorId(), event);
 
@@ -87,30 +80,20 @@ public class StreamHandler {
                             , event.getVehicleSpeedCalculated(), event.getVehicleClass().name());
                 }
 
-
                 messages.add(event);
-
             }
 
         });
-
 
         inputChannels.trafficEvents().subscribe(messageHandler);
     }
 
 
-
-
     private void subScribeOnKStreamsChannel() {
-
-
         this.messages = new ArrayList<>();
 
         messageHandler = (message -> {
             log.info("retrieved message " + message.getPayload().toString());
-
-
-
         });
 
 

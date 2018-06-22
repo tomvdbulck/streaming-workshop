@@ -15,4 +15,5 @@ logging:
   file:
     max-history: 10
   level: TRACE
-
+server:
+  port: 0

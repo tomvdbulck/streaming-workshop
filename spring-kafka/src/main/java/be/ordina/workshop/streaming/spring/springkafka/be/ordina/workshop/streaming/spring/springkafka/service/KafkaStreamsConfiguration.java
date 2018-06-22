@@ -7,6 +7,7 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import java.util.Map;
 @EnableKafkaStreams
 public class KafkaStreamsConfiguration {
 
+    @Autowired
     private KafkaProperties kafkaProperties;
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
@@ -48,6 +50,8 @@ public class KafkaStreamsConfiguration {
     @Bean
     public KStream<Windowed<String>, Integer> kStream(StreamsBuilder streamsBuilder) {
 
+        System.out.println(">>>>>>>>>>>>>> enter kstream");
+
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEvents", Consumed.with(Serdes.String(), new JsonSerde<>(TrafficEvent.class)));
 
         KStream<Windowed<String>, Integer> countedSensorStream = stream.map(new SensorKeyValueMapper())
@@ -57,7 +61,11 @@ public class KafkaStreamsConfiguration {
 
         countedSensorStream.to("streams-output");
 
+        System.out.println("print ");
         countedSensorStream.print();
+
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
 
         return countedSensorStream;
 
