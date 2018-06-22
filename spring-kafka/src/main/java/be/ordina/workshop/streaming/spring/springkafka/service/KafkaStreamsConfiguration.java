@@ -1,7 +1,8 @@
 package be.ordina.workshop.streaming.spring.springkafka.service;
 
+import be.ordina.workshop.streaming.spring.springkafka.domain.SensorData;
 import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEvent;
-import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEventSerde;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.Consumed;
 import org.apache.kafka.streams.KeyValue;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 @EnableKafkaStreams
+@Slf4j
 public class KafkaStreamsConfiguration {
 
     @Autowired
@@ -58,7 +60,7 @@ public class KafkaStreamsConfiguration {
         JsonSerde<TrafficEvent> trafficEventJsonSerde = new JsonSerde<>(TrafficEvent.class);
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), trafficEventJsonSerde));
-        stream.print();
+        //stream.print();
 
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
@@ -68,9 +70,24 @@ public class KafkaStreamsConfiguration {
     }
 
 
+    @Bean
+    public KStream<String, SensorData> kStreamSensorIdentification(StreamsBuilder streamsBuilder){
+
+        System.out.println(">>>>>>>>>>>>>> enter kstreamStart sensors ");
+
+        JsonSerde<SensorData> sensorDataJsonSerde = new JsonSerde<>(SensorData.class);
+
+        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), sensorDataJsonSerde));
+        sensorDescriptionsStream.print();
 
 
-    //@Bean
+        return sensorDescriptionsStream;
+    }
+
+
+
+/**
+ //@Bean
     public KStream<Windowed<String>, Integer> kStream(StreamsBuilder streamsBuilder) {
 
         System.out.println(">>>>>>>>>>>>>> enter kstream");
@@ -84,13 +101,13 @@ public class KafkaStreamsConfiguration {
                 .reduce((Integer value1, Integer value2) -> value1 + value2, TimeWindows.of(1000), "windowStore")
                 .toStream();
 
-        /** KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
 
         KStream<Windowed<String>, Integer> countedSensorStream = stream.map(new SensorKeyValueMapper())
                 .groupByKey()
                 .reduce((Integer value1, Integer value2) -> value1 + value2, TimeWindows.of(1000), "windowStore")
                 .toStream();
-**/
+
         countedSensorStream.to("streams-output", Produced.valueSerde(Serdes.Integer()));
 
         System.out.println("print ");
@@ -102,6 +119,7 @@ public class KafkaStreamsConfiguration {
         return countedSensorStream;
 
     }
+ **/
 
     public class SensorKeyValueMapper implements KeyValueMapper<String, String, KeyValue<String, Integer>> {
 

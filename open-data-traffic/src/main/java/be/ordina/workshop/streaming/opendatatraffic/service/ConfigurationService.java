@@ -1,6 +1,8 @@
 package be.ordina.workshop.streaming.opendatatraffic.service;
 
 
+import be.ordina.workshop.streaming.opendatatraffic.cloud.Channels;
+import be.ordina.workshop.streaming.opendatatraffic.cloud.CloudProducer;
 import be.ordina.workshop.streaming.opendatatraffic.converter.ConvertXmlToDomain;
 import be.ordina.workshop.streaming.opendatatraffic.domain.SensorData;
 import generated.config.TMivconfig;
@@ -28,13 +30,15 @@ public class ConfigurationService {
 
 
     private final ConvertXmlToDomain converter;
+    private final CloudProducer cloudProducer;
 
     @Autowired
-    public ConfigurationService(final ConvertXmlToDomain convertXmlToDomain) throws  Exception {
+    public ConfigurationService(final ConvertXmlToDomain convertXmlToDomain, CloudProducer cloudProducer) throws  Exception {
 
         sensorDataHashMap = new HashMap<>();
 
         this.converter = convertXmlToDomain;
+        this.cloudProducer = cloudProducer;
     }
 
     @PostConstruct
@@ -57,10 +61,17 @@ public class ConfigurationService {
         log.info("Read in {} records", sensorDataHashMap.size());
     }
 
+    public void sendSensorDataToKafka() {
+
+        log.info(">>>>>>>>>>>>>> Will send sensor data for {} sensors", this.sensorDataHashMap.size());
+
+        this.sensorDataHashMap.values().forEach(this.cloudProducer::sendSensorData);
+    }
+
 
     @PostConstruct
     public void setupSensors() throws Exception {
-        sensorIdsToProcess =  Files.lines(Paths.get(getClass().getResource("/sensors_mechelen_n_z.txt").toURI() ))
+        this.sensorIdsToProcess =  Files.lines(Paths.get(getClass().getResource("/sensors_mechelen_n_z.txt").toURI() ))
                 .map(String::toUpperCase)
                 .collect(Collectors.toList());
 

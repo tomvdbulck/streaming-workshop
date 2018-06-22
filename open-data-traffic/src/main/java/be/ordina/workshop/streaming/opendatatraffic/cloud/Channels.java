@@ -16,7 +16,12 @@ public interface Channels {
     MessageChannel trafficEventsOutput();
 
     @Output
+    MessageChannel sensorDataOutput();
+
+    @Output
     SubscribableChannel ouputKStreams();
+
+
 
 
 
