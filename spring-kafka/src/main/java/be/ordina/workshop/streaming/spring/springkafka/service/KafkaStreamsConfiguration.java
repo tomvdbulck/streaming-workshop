@@ -4,8 +4,12 @@ import be.ordina.workshop.streaming.spring.springkafka.domain.SensorData;
 import be.ordina.workshop.streaming.spring.springkafka.domain.SensorDataSerde;
 import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEvent;
 import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEventSerde;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.Consumed;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -18,7 +22,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerde;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import javax.annotation.PostConstruct;
 import java.nio.file.Files;
@@ -142,20 +148,18 @@ public class KafkaStreamsConfiguration {
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         stream.selectKey((key,value) -> value.getSensorId())
-                .filter((key, value) -> canProcessSensor(key))
-                .foreach((key, value) -> updateStats(value));
-
-
-        /** stream.selectKey((key,value) -> value.getSensorId())
                 .join(sensorDataKTable,((TrafficEvent trafficEvent, SensorData sensorData) -> {
                     trafficEvent.setSensorData(sensorData);
                     return trafficEvent;
-                }))
-                .selectKey((key, value) -> key + value.getTimeRegistration().toString())
-                .print();
-                //.to("enriched-traffic-events");
-        **/
-        //stream.print();
+                }), Joined.with(Serdes.String(), new TrafficEventSerde(), null))
+                .to("enriched-trafficEventsOutput");
+
+
+
+        KStream<String, TrafficEvent> streamToProcessData = streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        streamToProcessData.selectKey((key,value) -> value.getSensorId())
+                .filter((key, value) -> canProcessSensor(key))
+                .foreach((key, value) -> updateStats(value));
 
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
