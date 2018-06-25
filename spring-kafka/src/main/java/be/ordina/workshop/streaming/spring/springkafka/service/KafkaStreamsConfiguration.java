@@ -36,6 +36,64 @@ public class KafkaStreamsConfiguration {
 
     private List<String> sensorIdsToProcess;
 
+    private final HashMap<String, Integer> totalVehicleCountPerSensor;
+    private final HashMap<String, Integer> totalVehicleCountPerSensorPerType;
+    private final HashMap<String, Integer> highestSpeedPerSensor;
+    private final HashMap<String, Integer> lowestSpeedPerSensor;
+
+    public KafkaStreamsConfiguration(){
+        this.totalVehicleCountPerSensor = new HashMap<>();
+        this.totalVehicleCountPerSensorPerType = new HashMap<>();
+        this.highestSpeedPerSensor = new HashMap<>();
+        this.lowestSpeedPerSensor = new HashMap<>();
+    }
+
+    public void printOutStats() {
+        System.out.println("==========    TOTAL PER SENSOR ===========");
+        for (String key : totalVehicleCountPerSensor.keySet()) {
+            System.out.println(key + ": " + totalVehicleCountPerSensor.get(key));
+        }
+
+        System.out.println("==========    TOTAL PER SENSOR PER VEHICLE TYPE ===========");
+        for (String key : totalVehicleCountPerSensorPerType.keySet()) {
+            System.out.println(key + ": " + totalVehicleCountPerSensorPerType.get(key));
+        }
+
+        System.out.println("==========    FASTERS PER SENSOR ===========");
+        for (String key : highestSpeedPerSensor.keySet()) {
+            System.out.println(key + ": " + highestSpeedPerSensor.get(key));
+        }
+
+        System.out.println("==========    SLOWEST PER SENSOR ===========");
+        for (String key : lowestSpeedPerSensor.keySet()) {
+            System.out.println(key + ": " + lowestSpeedPerSensor.get(key));
+        }
+    }
+
+    private void updateStats(TrafficEvent trafficEvent) {
+
+        System.out.println("Processing data for trafficEvent" + trafficEvent);
+
+        Integer totalCountSensor = (totalVehicleCountPerSensor.get(trafficEvent.getSensorId()) != null ? totalVehicleCountPerSensor.get(trafficEvent.getSensorId()) : 0);
+        totalVehicleCountPerSensor.put(trafficEvent.getSensorId(), totalCountSensor + trafficEvent.getTrafficIntensity());
+
+        Integer totalCountPerSensorPerType = (totalVehicleCountPerSensorPerType.get(trafficEvent.getSensorId() + " " +trafficEvent.getVehicleClass().name()) != null
+                ? totalVehicleCountPerSensorPerType.get(trafficEvent.getSensorId() + " " +trafficEvent.getVehicleClass().name()) : 0);
+        totalVehicleCountPerSensorPerType.put(trafficEvent.getSensorId() + " " +trafficEvent.getVehicleClass().name(), totalCountPerSensorPerType + trafficEvent.getTrafficIntensity());
+
+        Integer fastestPerSensor = (highestSpeedPerSensor.get(trafficEvent.getSensorId()) != null ? highestSpeedPerSensor.get(trafficEvent.getSensorId()) : 0);
+        if (fastestPerSensor < trafficEvent.getVehicleSpeedCalculated()) {
+            highestSpeedPerSensor.put(trafficEvent.getSensorId(), trafficEvent.getVehicleSpeedCalculated());
+        }
+
+        Integer lowestSpeedPserSensor = (lowestSpeedPerSensor.get(trafficEvent.getSensorId()) != null ? lowestSpeedPerSensor.get(trafficEvent.getSensorId()) : 0);
+        if (lowestSpeedPserSensor > trafficEvent.getVehicleSpeedCalculated()) {
+            lowestSpeedPerSensor.put(trafficEvent.getSensorId(), trafficEvent.getVehicleSpeedCalculated());
+        }
+
+    }
+
+
     @Autowired
     private KafkaProperties kafkaProperties;
 
@@ -83,8 +141,9 @@ public class KafkaStreamsConfiguration {
         //sensorDataKTable.print();
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
-        stream.selectKey((key,value) -> value.getSensorId()).filter((key, value) -> canProcessSensor(key))
-                .print();
+        stream.selectKey((key,value) -> value.getSensorId())
+                .filter((key, value) -> canProcessSensor(key))
+                .foreach((key, value) -> updateStats(value));
 
 
         /** stream.selectKey((key,value) -> value.getSensorId())
