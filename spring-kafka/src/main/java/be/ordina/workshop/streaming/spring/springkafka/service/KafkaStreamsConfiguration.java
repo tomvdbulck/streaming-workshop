@@ -182,7 +182,6 @@ public class KafkaStreamsConfiguration {
 
         //streamToProcessData.print();
 
-
         this.createWindowStream(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
 
         /**
@@ -206,20 +205,17 @@ public class KafkaStreamsConfiguration {
      * @return
      */
     private void createWindowStream(KStream<String, TrafficEvent> streamToProcessData) {
-        streamToProcessData.groupByKey()
-                .windowedBy(TimeWindows.of(300000).advanceBy(60000));
-
-
         Initializer initializer = () -> new SensorCount();
 
 
         streamToProcessData.groupByKey().windowedBy(TimeWindows.of(300000).advanceBy(60000))
-            .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getTrafficIntensity()),
+            .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getVehicleSpeedCalculated()),
                 Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
             .mapValues(SensorCount::average, Materialized.with(new WindowedSerde<>(Serdes.String()), Serdes.Double()))
             .toStream()
             .map(((key, average) -> new KeyValue<>(key.key(), average)))
-             .print();
+            .through("average-speed-per-sensor", Produced.with(Serdes.String(), Serdes.Double()))
+            .foreach((key, average) -> log.info((String.format(" =======> average speed for the sensor %s is now %s", key, average))));
             //.print();
 
 
@@ -235,8 +231,11 @@ public class KafkaStreamsConfiguration {
         }
 
         public SensorCount addValue(Integer value) {
-            this.sum += value;
-            count++;
+            if (value > 0) {
+                this.sum += value;
+                count++;
+            }
+
             return this;
         }
 
