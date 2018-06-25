@@ -59,22 +59,26 @@ public class KafkaStreamsConfiguration {
 
         System.out.println(">>>>>>>>>>>>>> enter kstreamStart ");
 
-        KTable<String, SensorData> sensorDataKTable = streamsBuilder.table("sensorData-withKey", Consumed.with(Serdes.String(), new SensorDataSerde()));
 
+        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
 
+        KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
+        sensorDescriptionsWithKey.to("dummy-topic");
+
+        KTable<String, SensorData> sensorDataKTable = streamsBuilder.table("dummy-topic", Consumed.with(Serdes.String(), new SensorDataSerde()));
         //sensorDataKTable.print();
-
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
 
-        /**stream.selectKey((key,value) -> value.getSensorId())
-                .join(sensorDataKTable, ((trafficEvent, sensorData) -> {
-                    trafficEvent.setSensorData(sensorData);
-                    return trafficEvent;
-                }))
+        stream.selectKey((key,value) -> value.getSensorId())
+                //.join(sensorDataKTable, ((trafficEvent, sensorData) -> {
+                //    trafficEvent.setSensorData(sensorData);
+                //    return trafficEvent;
+                //}))
+                .selectKey((key, value) -> key + value.getTimeRegistration().toString())
                 .print();
                 //.to("enriched-traffic-events");
-        **/
+
         //stream.print();
 
 
@@ -87,20 +91,15 @@ public class KafkaStreamsConfiguration {
 
     @Bean
     public KStream<String, SensorData> kStreamSensorIdentification(StreamsBuilder streamsBuilder){
+        //KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
 
-        System.out.println(">>>>>>>>>>>>>> enter kstreamStart sensors ");
+        //KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
+        //sensorDescriptionsWithKey.to("sensorDataOutputWithKey");
+        //sensorDescriptionsWithKey.print();
 
-        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
+        //return sensorDescriptionsStream;
 
-
-
-        KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
-        sensorDescriptionsWithKey.print();
-
-        sensorDescriptionsWithKey.to("sensorData-withKey");
-
-
-        return sensorDescriptionsStream;
+        return null;
     }
 
 
