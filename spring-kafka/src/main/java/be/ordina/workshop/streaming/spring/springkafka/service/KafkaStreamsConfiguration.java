@@ -78,7 +78,7 @@ public class KafkaStreamsConfiguration {
 
     private void updateStats(TrafficEvent trafficEvent) {
 
-        System.out.println("Processing data for trafficEvent" + trafficEvent);
+        //System.out.println("Processing data for trafficEvent" + trafficEvent);
 
         Integer totalCountSensor = (totalVehicleCountPerSensor.get(trafficEvent.getSensorId()) != null ? totalVehicleCountPerSensor.get(trafficEvent.getSensorId()) : 0);
         totalVehicleCountPerSensor.put(trafficEvent.getSensorId(), totalCountSensor + trafficEvent.getTrafficIntensity());
@@ -138,6 +138,13 @@ public class KafkaStreamsConfiguration {
         System.out.println(">>>>>>>>>>>>>> enter kstreamStart ");
 
 
+        /**
+         * Read in the data of the sensor topic.
+         * Choose the correct key
+         *
+         * Store these into a KTable
+         *
+         */
         KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
 
         KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
@@ -145,6 +152,15 @@ public class KafkaStreamsConfiguration {
 
         KTable<String, SensorData> sensorDataKTable = streamsBuilder.table("dummy-topic", Consumed.with(Serdes.String(), new SensorDataSerde()));
         //sensorDataKTable.print();
+
+
+        /**
+         *
+         * Retrieve the data from the traffic events
+         *
+         * Enrich these with the sensor data.
+         *
+         */
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         stream.selectKey((key,value) -> value.getSensorId())
@@ -155,13 +171,23 @@ public class KafkaStreamsConfiguration {
                 .to("enriched-trafficEventsOutput");
 
 
+        /**
+         *
+         * Filter out data which we do not want to process
+         *
+         */
 
         KStream<String, TrafficEvent> streamToProcessData = streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         streamToProcessData.selectKey((key,value) -> value.getSensorId())
-                .filter((key, value) -> canProcessSensor(key))
-                .foreach((key, value) -> updateStats(value));
+                .filter((key, value) -> canProcessSensor(key));
 
+        streamToProcessData.print();
 
+        /**
+         * Process data for each record of the stream.
+         */
+
+        streamToProcessData.foreach((key, value) -> updateStats(value));
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
 
         return stream;
