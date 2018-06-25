@@ -44,9 +44,10 @@ public class TrafficEventIntakeService implements ApplicationRunner {
 
     public void putAllEventsInKafka() throws Exception {
         log.info("put Events in Kafka");
-        readInSensorDataService.readInData().forEach(cloudProducer::sendMessage);
 
         this.configurationService.getSensorDataHashMap().values().forEach(cloudProducer::sendSensorData);
+
+        readInSensorDataService.readInData().forEach(cloudProducer::sendMessage);
 
         log.info("completed putting Events in Kafka");
     }

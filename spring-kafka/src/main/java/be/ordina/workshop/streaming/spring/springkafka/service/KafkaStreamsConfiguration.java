@@ -20,8 +20,13 @@ import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
+import javax.annotation.PostConstruct;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableKafka
@@ -29,8 +34,17 @@ import java.util.Map;
 @Slf4j
 public class KafkaStreamsConfiguration {
 
+    private List<String> sensorIdsToProcess;
+
     @Autowired
     private KafkaProperties kafkaProperties;
+
+    @PostConstruct
+    public void setupSensorsToFilter() throws Exception {
+        this.sensorIdsToProcess =  Files.lines(Paths.get(getClass().getResource("/sensors_mechelen_n_z.txt").toURI() ))
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+    }
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public StreamsConfig kStreamsConfigs() {
@@ -69,16 +83,19 @@ public class KafkaStreamsConfiguration {
         //sensorDataKTable.print();
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        stream.selectKey((key,value) -> value.getSensorId()).filter((key, value) -> canProcessSensor(key))
+                .print();
 
-        stream.selectKey((key,value) -> value.getSensorId())
-                //.join(sensorDataKTable, ((trafficEvent, sensorData) -> {
-                //    trafficEvent.setSensorData(sensorData);
-                //    return trafficEvent;
-                //}))
+
+        /** stream.selectKey((key,value) -> value.getSensorId())
+                .join(sensorDataKTable,((TrafficEvent trafficEvent, SensorData sensorData) -> {
+                    trafficEvent.setSensorData(sensorData);
+                    return trafficEvent;
+                }))
                 .selectKey((key, value) -> key + value.getTimeRegistration().toString())
                 .print();
                 //.to("enriched-traffic-events");
-
+        **/
         //stream.print();
 
 
@@ -86,6 +103,10 @@ public class KafkaStreamsConfiguration {
 
         return stream;
 
+    }
+
+    private boolean canProcessSensor(String key) {
+        return this.sensorIdsToProcess.contains(key);
     }
 
 
