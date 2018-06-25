@@ -1,7 +1,9 @@
 package be.ordina.workshop.streaming.spring.springkafka.service;
 
 import be.ordina.workshop.streaming.spring.springkafka.domain.SensorData;
+import be.ordina.workshop.streaming.spring.springkafka.domain.SensorDataSerde;
 import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEvent;
+import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEventSerde;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.Consumed;
@@ -59,7 +61,7 @@ public class KafkaStreamsConfiguration {
 
         JsonSerde<TrafficEvent> trafficEventJsonSerde = new JsonSerde<>(TrafficEvent.class);
 
-        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), trafficEventJsonSerde));
+        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         //stream.print();
 
 
@@ -77,7 +79,7 @@ public class KafkaStreamsConfiguration {
 
         JsonSerde<SensorData> sensorDataJsonSerde = new JsonSerde<>(SensorData.class);
 
-        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), sensorDataJsonSerde));
+        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
         sensorDescriptionsStream.print();
 
 
