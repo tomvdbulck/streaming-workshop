@@ -15,6 +15,8 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.internals.WindowedDeserializer;
+import org.apache.kafka.streams.kstream.internals.WindowedSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -126,9 +128,6 @@ public class KafkaStreamsConfiguration {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, new JsonSerde<TrafficEvent>(TrafficEvent.class).getClass());
 
-
-        //props.put(JsonDeserializer.DEFAULT_KEY_TYPE, String.class);
-        //props.put(JsonDeserializer.DEFAULT_VALUE_TYPE, TrafficEvent.class);
         return new StreamsConfig(props);
     }
 
@@ -183,6 +182,9 @@ public class KafkaStreamsConfiguration {
 
         streamToProcessData.print();
 
+
+        this.createWindowStream(streamToProcessData);
+
         /**
          * Process data for each record of the stream.
          */
@@ -191,8 +193,90 @@ public class KafkaStreamsConfiguration {
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
 
         return stream;
+    }
+
+
+    private KStream createWindowStream(KStream<String, TrafficEvent> streamToProcessData) {
+
+
+
+        streamToProcessData.groupByKey()
+                .windowedBy(TimeWindows.of(300000).advanceBy(60000));
+
+
+        Initializer initializer = () -> new SensorCount();
+
+        KTable<byte[], Long> aggregatedStream =
+                streamToProcessData.groupByKey().windowedBy(TimeWindows.of(300000).advanceBy(60000))
+                .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getTrafficIntensity()),
+                        Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
+                .toStream()
+                .print()
+
 
     }
+
+
+    static class SensorCount {
+
+        int count;
+        Integer sum;
+
+        public SensorCount() {
+        }
+
+        public SensorCount addValue(Integer value) {
+            this.sum += value;
+            count++;
+            return this;
+        }
+
+        public double average() {
+            return sum / count;
+        }
+
+        public void getSum() {
+
+        }
+    }
+
+    static class WindowedSerde<T> implements Serde<Windowed<T>> {
+
+        private final Serde<Windowed<T>> inner;
+
+        public WindowedSerde(Serde<T> serde) {
+            inner = Serdes.serdeFrom(
+                    new WindowedSerializer<>(serde.serializer()),
+                    new WindowedDeserializer<>(serde.deserializer()));
+        }
+
+        @Override
+        public Serializer<Windowed<T>> serializer() {
+            return inner.serializer();
+        }
+
+        @Override
+        public Deserializer<Windowed<T>> deserializer() {
+            return inner.deserializer();
+        }
+
+        @Override
+        public void configure(Map<String, ?> configs, boolean isKey) {
+            inner.serializer().configure(configs, isKey);
+            inner.deserializer().configure(configs, isKey);
+        }
+
+        @Override
+        public void close() {
+            inner.serializer().close();
+            inner.deserializer().close();
+        }
+
+    }
+
+
+
+
 
     private boolean canProcessSensor(String key) {
         return this.sensorIdsToProcess.contains(key);
