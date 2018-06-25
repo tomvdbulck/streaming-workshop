@@ -6,6 +6,7 @@ import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEvent;
 import be.ordina.workshop.streaming.spring.springkafka.domain.TrafficEventSerde;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -24,9 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerde;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import javax.annotation.PostConstruct;
 import java.nio.file.Files;
@@ -56,6 +55,27 @@ public class KafkaStreamsConfiguration {
         this.lowestSpeedPerSensor = new HashMap<>();
     }
 
+    @Bean
+    public NewTopic dummyTopic() {
+        return new NewTopic("dummy-topic", 10, (short) 1);
+    }
+
+    @Bean
+    public NewTopic trafficPerLane() {
+        return new NewTopic("traffic-per-lane", 10, (short) 1);
+    }
+
+    @Bean
+    public NewTopic averageSpeedOverAllLanes() {
+        return new NewTopic(" average-speed-over-all-lanes", 10, (short) 1);
+    }
+
+    @Bean
+    public NewTopic averageSpeedPerSensor() {
+        return new NewTopic("average-speed-per-sensor", 10, (short) 1);
+    }
+
+
     public void printOutStats() {
         System.out.println("==========    TOTAL PER SENSOR ===========");
         for (String key : totalVehicleCountPerSensor.keySet()) {
@@ -67,7 +87,7 @@ public class KafkaStreamsConfiguration {
             System.out.println(key + ": " + totalVehicleCountPerSensorPerType.get(key));
         }
 
-        System.out.println("==========    FASTERS PER SENSOR ===========");
+        System.out.println("==========    FASTEST PER SENSOR ===========");
         for (String key : highestSpeedPerSensor.keySet()) {
             System.out.println(key + ": " + highestSpeedPerSensor.get(key));
         }
@@ -177,12 +197,23 @@ public class KafkaStreamsConfiguration {
          */
 
         KStream<String, TrafficEvent> streamToProcessData = streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
-        streamToProcessData.selectKey((key,value) -> value.getSensorId())
-                .filter((key, value) -> canProcessSensor(key));
 
+        //streamToProcessData.selectKey((key,value) -> value.getSensorId())
+        //        .filter((key, value) -> canProcessSensor(key));
         //streamToProcessData.print();
 
-        this.createWindowStream(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
+
+        this.createWindowStreamForAverageSpeedPerSensor(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
+
+
+        streamToProcessData.filter((key, value) -> canProcessSensor(key))
+                .selectKey((key,value) -> value.getSensorData().getName().replaceAll("\\s","").replaceAll("-", ""))
+        .to("traffic-per-lane");
+
+        KStream<String, TrafficEvent> streamPerHighwayLaneToProcess = streamsBuilder.stream("traffic-per-lane", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        //streamPerHighwayLaneToProcess.print();
+
+        this.createWindowStreamForAverageSpeedPerHighwaySection(streamPerHighwayLaneToProcess);
 
         /**
          * Process data for each record of the stream.
@@ -203,20 +234,48 @@ public class KafkaStreamsConfiguration {
      *
      * @param streamToProcessData
      * @return
+     *
      */
-    private void createWindowStream(KStream<String, TrafficEvent> streamToProcessData) {
+    private void createWindowStreamForAverageSpeedPerSensor(KStream<String, TrafficEvent> streamToProcessData) {
         Initializer initializer = () -> new SensorCount();
 
 
-        streamToProcessData.groupByKey().windowedBy(TimeWindows.of(300000).advanceBy(60000))
-            .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getVehicleSpeedCalculated()),
-                Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
-            .mapValues(SensorCount::average, Materialized.with(new WindowedSerde<>(Serdes.String()), Serdes.Double()))
-            .toStream()
-            .map(((key, average) -> new KeyValue<>(key.key(), average)))
-            .through("average-speed-per-sensor", Produced.with(Serdes.String(), Serdes.Double()))
-            .foreach((key, average) -> log.info((String.format(" =======> average speed for the sensor %s is now %s", key, average))));
+        streamToProcessData
+                .groupByKey()
+                .windowedBy(TimeWindows.of(300000).advanceBy(60000))
+                .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getVehicleSpeedCalculated()),
+                    Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
+                .mapValues(SensorCount::average, Materialized.with(new WindowedSerde<>(Serdes.String()), Serdes.Double()))
+                .toStream()
+                .map(((key, average) -> new KeyValue<>(key.key(), average)))
+                .through("average-speed-per-sensor", Produced.with(Serdes.String(), Serdes.Double()))
+                .foreach((key, average) -> log.info((String.format(" =======> average speed for the sensor %s is now %s", key, average))));
             //.print();
+    }
+
+
+    /**
+     * Create a windowed Stream
+     *
+     * @param streamToProcessData
+     * @return
+     *
+     */
+    private void createWindowStreamForAverageSpeedPerHighwaySection(KStream<String, TrafficEvent> streamToProcessData) {
+        Initializer initializer = () -> new SensorCount();
+
+
+        streamToProcessData
+                .groupByKey()
+                .windowedBy(TimeWindows.of(300000).advanceBy(60000))
+                .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getVehicleSpeedCalculated()),
+                        Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
+                .mapValues(SensorCount::average, Materialized.with(new WindowedSerde<>(Serdes.String()), Serdes.Double()))
+                .toStream()
+                .map(((key, average) -> new KeyValue<>(key.key(), average)))
+                .through("average-speed-over-all-lanes", Produced.with(Serdes.String(), Serdes.Double()))
+                .foreach((key, average) -> log.info((String.format(" =======> average speed for the highway %s is now %s", key, average))));
+        //.print();
 
 
     }
@@ -240,7 +299,11 @@ public class KafkaStreamsConfiguration {
         }
 
         public double average() {
-            return sum / count;
+            if (count > 0) {
+                return sum / count;
+            } else {
+                return 0;
+            }
         }
 
         public int getSum() {

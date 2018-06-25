@@ -104,6 +104,7 @@ public class StreamHandler {
 
 
         inputChannels.ouputKStreams().subscribe(messageHandler);
+
     }
 
     public List<TrafficEvent> getMessages() {

@@ -21,6 +21,9 @@ public interface Channels {
     @Output
     SubscribableChannel ouputKStreams();
 
+    @Output
+    SubscribableChannel dummyTopic();
+
 
 
 
