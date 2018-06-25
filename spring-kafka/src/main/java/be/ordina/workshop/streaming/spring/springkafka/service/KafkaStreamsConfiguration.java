@@ -59,9 +59,22 @@ public class KafkaStreamsConfiguration {
 
         System.out.println(">>>>>>>>>>>>>> enter kstreamStart ");
 
-        JsonSerde<TrafficEvent> trafficEventJsonSerde = new JsonSerde<>(TrafficEvent.class);
+        KTable<String, SensorData> sensorDataKTable = streamsBuilder.table("sensorData-withKey", Consumed.with(Serdes.String(), new SensorDataSerde()));
+
+
+        //sensorDataKTable.print();
+
 
         KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+
+        /**stream.selectKey((key,value) -> value.getSensorId())
+                .join(sensorDataKTable, ((trafficEvent, sensorData) -> {
+                    trafficEvent.setSensorData(sensorData);
+                    return trafficEvent;
+                }))
+                .print();
+                //.to("enriched-traffic-events");
+        **/
         //stream.print();
 
 
@@ -77,10 +90,14 @@ public class KafkaStreamsConfiguration {
 
         System.out.println(">>>>>>>>>>>>>> enter kstreamStart sensors ");
 
-        JsonSerde<SensorData> sensorDataJsonSerde = new JsonSerde<>(SensorData.class);
-
         KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
-        sensorDescriptionsStream.print();
+
+
+
+        KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
+        sensorDescriptionsWithKey.print();
+
+        sensorDescriptionsWithKey.to("sensorData-withKey");
 
 
         return sensorDescriptionsStream;
