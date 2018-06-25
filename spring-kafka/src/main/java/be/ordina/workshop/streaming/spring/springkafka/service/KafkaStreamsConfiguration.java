@@ -180,38 +180,47 @@ public class KafkaStreamsConfiguration {
         streamToProcessData.selectKey((key,value) -> value.getSensorId())
                 .filter((key, value) -> canProcessSensor(key));
 
-        streamToProcessData.print();
+        //streamToProcessData.print();
 
 
-        this.createWindowStream(streamToProcessData);
+        this.createWindowStream(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
 
         /**
          * Process data for each record of the stream.
          */
 
-        streamToProcessData.foreach((key, value) -> updateStats(value));
+        streamToProcessData
+                .selectKey((key,value) -> value.getSensorId())
+                .filter((key, value) -> canProcessSensor(key))
+                .foreach((key, value) -> updateStats(value));
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> return ");
 
         return stream;
     }
 
 
-    private KStream createWindowStream(KStream<String, TrafficEvent> streamToProcessData) {
-
-
-
+    /**
+     * Create a windowed Stream
+     *
+     * @param streamToProcessData
+     * @return
+     */
+    private void createWindowStream(KStream<String, TrafficEvent> streamToProcessData) {
         streamToProcessData.groupByKey()
                 .windowedBy(TimeWindows.of(300000).advanceBy(60000));
 
 
         Initializer initializer = () -> new SensorCount();
 
-        KTable<byte[], Long> aggregatedStream =
-                streamToProcessData.groupByKey().windowedBy(TimeWindows.of(300000).advanceBy(60000))
-                .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getTrafficIntensity()),
-                        Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
-                .toStream()
-                .print()
+
+        streamToProcessData.groupByKey().windowedBy(TimeWindows.of(300000).advanceBy(60000))
+            .aggregate(initializer, (key, value, aggregate) -> aggregate.addValue(value.getTrafficIntensity()),
+                Materialized.with(Serdes.String(), new JsonSerde<>(SensorCount.class)))
+            .mapValues(SensorCount::average, Materialized.with(new WindowedSerde<>(Serdes.String()), Serdes.Double()))
+            .toStream()
+            .map(((key, average) -> new KeyValue<>(key.key(), average)))
+             .print();
+            //.print();
 
 
     }
@@ -220,7 +229,7 @@ public class KafkaStreamsConfiguration {
     static class SensorCount {
 
         int count;
-        Integer sum;
+        int sum;
 
         public SensorCount() {
         }
@@ -235,8 +244,20 @@ public class KafkaStreamsConfiguration {
             return sum / count;
         }
 
-        public void getSum() {
+        public int getSum() {
+            return this.sum;
+        }
 
+        public void setSum(int sum) {
+            this.sum = sum;
+        }
+
+        public int getCount() {
+            return this.count;
+        }
+
+        public void setCount(int count){
+            this.count = count;
         }
     }
 
