@@ -3,7 +3,6 @@ package be.ordina.workshop.streaming.opendatatraffic.service;
 
 import be.ordina.workshop.streaming.opendatatraffic.cloud.CloudProducer;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.SendingContext.RunTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -30,9 +29,7 @@ public class TrafficEventIntakeService implements ApplicationRunner {
     }
 
 
-
-
-    public void putEventsInKafka() throws Exception {
+    public void putSelectedEventsInKafka() throws Exception {
         log.info("put Events in Kafka");
         readInSensorDataService.readInData().forEach(m -> {
             if (configurationService.getSensorIdsToProcess().contains(m.getSensorId())) {
@@ -44,19 +41,22 @@ public class TrafficEventIntakeService implements ApplicationRunner {
         log.info("completed putting Events in Kafka");
     }
 
+
+    public void putAllEventsInKafka() throws Exception {
+        log.info("put Events in Kafka");
+
+        this.configurationService.getSensorDataHashMap().values().forEach(cloudProducer::sendSensorData);
+
+        readInSensorDataService.readInData().forEach(cloudProducer::sendMessage);
+
+        log.info("completed putting Events in Kafka");
+    }
+
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
 
         for (int i = 0;  i<500 ; i ++) {
-            putEventsInKafka();
-
-            if (i%5 == 0) {
-                try {
-                   throw new RuntimeException("We diveded by 5", new NumberFormatException("i is diveded by 5") );
-                } catch (RuntimeException e) {
-                    log.error("A random exception is thrown", e);
-                }
-            }
+            putAllEventsInKafka();
 
             Thread.sleep(60000l);
         }

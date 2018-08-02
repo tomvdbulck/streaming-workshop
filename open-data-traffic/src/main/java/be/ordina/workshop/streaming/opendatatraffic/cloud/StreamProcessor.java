@@ -18,12 +18,11 @@ import java.util.Arrays;
 @Component
 @Slf4j
 @EnableAutoConfiguration
-//@EnableBinding(KafkaStreamsProcessor.class)
 public class StreamProcessor {
 
 
-    //@StreamListener("input")
-    //@SendTo("output")
+    //@StreamListener("trafficEvents")
+    //@SendTo("stream-output")
     public KStream<?, String> process(KStream<?, TrafficEvent> input) {
 
 
@@ -36,11 +35,6 @@ public class StreamProcessor {
                 .count(TimeWindows.of(50000), "store-name")
                 .toStream()
                 .map((w, c) -> new KeyValue<>(null, "Count for " + w.key() + ": " + c));
-    }
-
-    @StreamListener("trafficEventsKStream")
-    public void sink(TrafficEvent input) {
-        log.info("FOOBAR -- " + input);
     }
 
 
