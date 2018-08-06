@@ -6,11 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class TrafficEventIntakeService implements ApplicationRunner {
+public class TrafficEventIntakeService {
 
     private final ReadInSensorDataService readInSensorDataService;
     private final ConfigurationService configurationService;
@@ -20,12 +21,25 @@ public class TrafficEventIntakeService implements ApplicationRunner {
 
     @Autowired
     public TrafficEventIntakeService(final ReadInSensorDataService readInSensorDataService, final CloudProducer cloudProducer, final ConfigurationService configurationService){
-
         this.readInSensorDataService = readInSensorDataService;
         this.cloudProducer = cloudProducer;
 
         this.configurationService = configurationService;
+    }
 
+    public void putAllEventsInKafka() throws Exception {
+        log.info("put Events in Kafka");
+
+        this.configurationService.getSensorDataHashMap().values().forEach(cloudProducer::sendSensorData);
+
+        readInSensorDataService.readInData().forEach(cloudProducer::sendMessage);
+
+        log.info("completed putting Events in Kafka");
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void run() throws Exception {
+        putAllEventsInKafka();
     }
 
 
@@ -39,29 +53,5 @@ public class TrafficEventIntakeService implements ApplicationRunner {
         });
 
         log.info("completed putting Events in Kafka");
-    }
-
-
-    public void putAllEventsInKafka() throws Exception {
-        log.info("put Events in Kafka");
-
-        this.configurationService.getSensorDataHashMap().values().forEach(cloudProducer::sendSensorData);
-
-        readInSensorDataService.readInData().forEach(cloudProducer::sendMessage);
-
-        log.info("completed putting Events in Kafka");
-    }
-
-    @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
-
-        for (int i = 0;  i<500 ; i ++) {
-            putAllEventsInKafka();
-
-            Thread.sleep(60000l);
-        }
-
-
-
     }
 }

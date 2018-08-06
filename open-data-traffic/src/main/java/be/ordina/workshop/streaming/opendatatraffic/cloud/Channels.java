@@ -24,8 +24,4 @@ public interface Channels {
     @Output
     SubscribableChannel dummyTopic();
 
-
-
-
-
 }

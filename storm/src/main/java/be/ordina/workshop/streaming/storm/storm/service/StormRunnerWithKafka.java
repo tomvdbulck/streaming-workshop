@@ -104,7 +104,7 @@ public class StormRunnerWithKafka{
         cluster.submitTopology("storm-kafka-client-spout-test", tpConf, getTopologyKafkaSpout(getKafkaSpoutConfig(KAFKA_LOCAL_BROKER)));
     }
 
-    protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
+    private StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), 1).setDebug(false);
         tp.setBolt("trafficEvent_Bolt", new TrafficEventBolt(sensorIdsToProcess)).setDebug(false)

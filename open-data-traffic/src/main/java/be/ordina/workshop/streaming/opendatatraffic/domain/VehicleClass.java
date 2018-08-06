@@ -4,7 +4,8 @@ public enum VehicleClass {
 
 
     /*
-    Please note that the vehicle class moto, 1, does not provide reliable data.
+    Note: the vehicle class MOTO(1),
+     does not provide reliable data.
      */
     MOTO(1),
     CAR(2),
