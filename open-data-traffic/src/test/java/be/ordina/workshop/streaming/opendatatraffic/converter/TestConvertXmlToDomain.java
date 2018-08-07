@@ -62,16 +62,4 @@ public class TestConvertXmlToDomain {
 
 
     }
-
-    @Test
-    @Ignore
-    public void testConvertWithEmptyFile() {
-        //TODO
-    }
-
-    @Test
-    @Ignore
-    public void testConvertWithNoTrafficEvents() {
-        //TODO
-    }
 }

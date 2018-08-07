@@ -21,12 +21,7 @@ public class ConvertXmlToDomain {
         List<TrafficEvent> events = new ArrayList<>();
 
         for (Miv.Meetpunt meetpunt : meetpunten) {
-
-
-
             for (Miv.Meetpunt.Meetdata meetdata : meetpunt.getMeetdata()) {
-
-
                 TrafficEvent trafficEvent = new TrafficEvent();
 
                 trafficEvent.setLastUpdated(meetpunt.getTijdLaatstGewijzigd().toGregorianCalendar().getTime());
@@ -47,32 +42,22 @@ public class ConvertXmlToDomain {
                 trafficEvent.setTimeRegistration(meetpunt.getTijdWaarneming().toGregorianCalendar().getTime());
                 trafficEvent.setLastUpdated(meetpunt.getTijdLaatstGewijzigd().toGregorianCalendar().getTime());
 
-
                 //trafficEvent.setSensorDefect();
                 trafficEvent.setSensorId(meetpunt.getUniekeId());
                 trafficEvent.setSensorDescriptiveId(meetpunt.getBeschrijvendeId());
                 trafficEvent.setTimeRegistration(meetpunt.getTijdWaarneming().toGregorianCalendar().getTime());
 
-
                 /* Handle the meetData data*/
-
                 trafficEvent.setVehicleClass(getVehicleClassFromMeetData(meetdata));
-
                 trafficEvent.setTrafficIntensity(meetdata.getVerkeersintensiteit());
 
                 trafficEvent.setVehicleSpeedCalculated(meetdata.getVoertuigsnelheidRekenkundig());
                 trafficEvent.setVehicleSpeedHarmonical(meetdata.getVoertuigsnelheidHarmonisch());
 
-
-
                 events.add(trafficEvent);
             }
-
         }
-
-
         return events;
-
     }
 
     private VehicleClass getVehicleClassFromMeetData(Miv.Meetpunt.Meetdata meetdata) {
