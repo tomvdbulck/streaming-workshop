@@ -14,8 +14,6 @@ public class TrafficEvent {
      */
     private Integer trafficIntensity;
 
-    private SensorData sensorData;
-
     /*
     Sum (vi) / n = arithmetic average speed of the vehicles in this vehicle class
         (with vi = individual speed of a vehicle in this vehicle class)

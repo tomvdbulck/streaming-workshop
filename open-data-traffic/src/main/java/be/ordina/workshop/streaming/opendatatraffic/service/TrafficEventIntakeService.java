@@ -47,7 +47,6 @@ public class TrafficEventIntakeService {
         log.info("put Events in Kafka");
         readInSensorDataService.readInData().forEach(m -> {
             if (configurationService.getSensorIdsToProcess().contains(m.getSensorId())) {
-                m.setSensorData(configurationService.getSensorDataHashMap().get(m.getSensorId()));
                 cloudProducer.sendMessage(m);
             }
         });
