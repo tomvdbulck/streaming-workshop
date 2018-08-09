@@ -87,9 +87,7 @@ public class StreamHandler {
             log.info("retrieved message " + message.getPayload().toString());
         });
 
-
         inputChannels.ouputKStreams().subscribe(messageHandler);
-
     }
 
     public List<TrafficEvent> getMessages() {
