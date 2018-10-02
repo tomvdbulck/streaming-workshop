@@ -4,12 +4,14 @@ import be.ordina.workshop.streaming.storm.storm.domain.TrafficEvent;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.PrintingBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficCountBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficEventBolt;
+import be.ordina.workshop.streaming.storm.storm.service.bolts.WindowBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.generated.StormTopology;
 import org.apache.storm.kafka.spout.*;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.topology.base.BaseWindowedBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.springframework.stereotype.Component;
@@ -111,6 +113,9 @@ public class StormRunnerWithKafka{
                 .globalGrouping("kafka_spout");
         tp.setBolt("updateTrafficEventStats_bolt", new TrafficCountBolt()).setDebug(true)
                 .fieldsGrouping("trafficEvent_Bolt", new Fields("sensorId"));
+        tp.setBolt("windowedProcessBolt", new WindowBolt().withWindow(BaseWindowedBolt.Duration.seconds(5)))
+                .setDebug(true)
+                .globalGrouping("trafficEvent_Bolt");
         return tp.createTopology();
     }
 

@@ -206,7 +206,8 @@ public class KafkaStreamsConfiguration {
          *
          */
 
-        KStream<String, TrafficEvent> streamToProcessData = streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> streamToProcessData =
+                streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
 
         streamToProcessData.selectKey((key,value) -> value.getSensorId())
                 .filter((key, value) -> canProcessSensor(key));
@@ -220,7 +221,8 @@ public class KafkaStreamsConfiguration {
                 .selectKey((key,value) -> value.getSensorData().getName().replaceAll("\\s","").replaceAll("-", ""))
         .to("traffic-per-lane");
 
-        KStream<String, TrafficEvent> streamPerHighwayLaneToProcess = streamsBuilder.stream("traffic-per-lane", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> streamPerHighwayLaneToProcess =
+                streamsBuilder.stream("traffic-per-lane", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         //streamPerHighwayLaneToProcess.print();
 
         this.createWindowStreamForAverageSpeedPerHighwaySection(streamPerHighwayLaneToProcess);
