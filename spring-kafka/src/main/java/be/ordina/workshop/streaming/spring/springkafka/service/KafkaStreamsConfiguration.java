@@ -75,6 +75,11 @@ public class KafkaStreamsConfiguration {
         return new NewTopic("average-speed-per-sensor", 10, (short) 1);
     }
 
+    @Bean
+    public NewTopic enrichedTrafficEventsOutput() {
+        return new NewTopic("enriched-trafficEventsOutput", 10, (short) 1);
+    }
+
 
     public void printOutStats() {
         System.out.println("==========    TOTAL PER SENSOR ===========");
@@ -164,12 +169,15 @@ public class KafkaStreamsConfiguration {
          * Store these into a KTable
          *
          */
-        KStream<String, SensorData> sensorDescriptionsStream = streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
+        KStream<String, SensorData> sensorDescriptionsStream =
+                streamsBuilder.stream("sensorDataOutput", Consumed.with(Serdes.String(), new SensorDataSerde()));
 
-        KStream<String, SensorData> sensorDescriptionsWithKey = sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
+        KStream<String, SensorData> sensorDescriptionsWithKey =
+                sensorDescriptionsStream.selectKey((key, value) -> value.getUniekeId());
         sensorDescriptionsWithKey.to("dummy-topic");
 
-        KTable<String, SensorData> sensorDataKTable = streamsBuilder.table("dummy-topic", Consumed.with(Serdes.String(), new SensorDataSerde()));
+        KTable<String, SensorData> sensorDataKTable =
+                streamsBuilder.table("dummy-topic", Consumed.with(Serdes.String(), new SensorDataSerde()));
         //sensorDataKTable.print();
 
 
@@ -181,7 +189,9 @@ public class KafkaStreamsConfiguration {
          *
          */
 
-        KStream<String, TrafficEvent> stream = streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> stream =
+                streamsBuilder.stream("trafficEventsOutput", Consumed.with(Serdes.String()
+                        , new TrafficEventSerde()));
         stream.selectKey((key,value) -> value.getSensorId())
                 .join(sensorDataKTable,((TrafficEvent trafficEvent, SensorData sensorData) -> {
                     trafficEvent.setSensorData(sensorData);
@@ -196,21 +206,23 @@ public class KafkaStreamsConfiguration {
          *
          */
 
-        KStream<String, TrafficEvent> streamToProcessData = streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> streamToProcessData =
+                streamsBuilder.stream("enriched-trafficEventsOutput", Consumed.with(Serdes.String(), new TrafficEventSerde()));
 
-        //streamToProcessData.selectKey((key,value) -> value.getSensorId())
-        //        .filter((key, value) -> canProcessSensor(key));
+        streamToProcessData.selectKey((key,value) -> value.getSensorId())
+                .filter((key, value) -> canProcessSensor(key));
         //streamToProcessData.print();
 
 
-        this.createWindowStreamForAverageSpeedPerSensor(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
+        //this.createWindowStreamForAverageSpeedPerSensor(streamToProcessData.filter((key, value) -> canProcessSensor(key)));
 
 
         streamToProcessData.filter((key, value) -> canProcessSensor(key))
                 .selectKey((key,value) -> value.getSensorData().getName().replaceAll("\\s","").replaceAll("-", ""))
         .to("traffic-per-lane");
 
-        KStream<String, TrafficEvent> streamPerHighwayLaneToProcess = streamsBuilder.stream("traffic-per-lane", Consumed.with(Serdes.String(), new TrafficEventSerde()));
+        KStream<String, TrafficEvent> streamPerHighwayLaneToProcess =
+                streamsBuilder.stream("traffic-per-lane", Consumed.with(Serdes.String(), new TrafficEventSerde()));
         //streamPerHighwayLaneToProcess.print();
 
         this.createWindowStreamForAverageSpeedPerHighwaySection(streamPerHighwayLaneToProcess);
@@ -262,8 +274,8 @@ public class KafkaStreamsConfiguration {
      *
      */
     private void createWindowStreamForAverageSpeedPerHighwaySection(KStream<String, TrafficEvent> streamToProcessData) {
-        Initializer initializer = () -> new SensorCount();
 
+        Initializer initializer = () -> new SensorCount();
 
         streamToProcessData
                 .groupByKey()
@@ -274,7 +286,8 @@ public class KafkaStreamsConfiguration {
                 .toStream()
                 .map(((key, average) -> new KeyValue<>(key.key(), average)))
                 .through("average-speed-over-all-lanes", Produced.with(Serdes.String(), Serdes.Double()))
-                .foreach((key, average) -> log.info((String.format(" =======> average speed for the highway %s is now %s", key, average))));
+                .foreach((key, average) ->
+                        log.info((String.format(" =======> average speed for the highway %s is now %s", key, average))));
         //.print();
 
 

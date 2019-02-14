@@ -9,14 +9,10 @@ import java.util.Date;
 public class TrafficEvent {
 
     private VehicleClass vehicleClass;
-
     /*
     This is the vehicleCount.
      */
     private Integer trafficIntensity;
-
-    private SensorData sensorData;
-
 
     /*
     Sum (vi) / n = arithmetic average speed of the vehicles in this vehicle class
@@ -30,7 +26,6 @@ public class TrafficEvent {
         - 252: no vehicles were counted in this vehicle class.
      */
     private Integer vehicleSpeedCalculated;
-
 
     /*
     n / Sum (1/vi) = harmonic average speed of the vehicles in this vehicle class

@@ -34,9 +34,6 @@ public class ConfigurationServiceTest {
 
     @Test
     public void testLoadInConfigData() throws Exception{
-
-        when(channels.sensorDataOutput()).thenReturn(messageChannelSensors);
-
         configurationService.loadInSensorData();
 
         Assert.assertThat(configurationService.getSensorDataHashMap().size(), Is.is(4254));

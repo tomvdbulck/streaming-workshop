@@ -28,12 +28,8 @@ public class ReadInSensorDataService {
         this.convertXmlToDomain = convertXmlToDomain;
     }
 
-
-
     public List<TrafficEvent> readInData() throws Exception {
         log.info("Will read in data from " + url);
-
-
 
         JAXBContext jc = JAXBContext.newInstance("generated.traffic");
         Unmarshaller um = jc.createUnmarshaller();
@@ -41,13 +37,9 @@ public class ReadInSensorDataService {
         Miv miv = (Miv) um.unmarshal(new URL(url).openStream());
 
         log.info(" This data is from " + miv.getTijdPublicatie().toGregorianCalendar().getTime());
-
-
         List<TrafficEvent> trafficEventList = convertXmlToDomain.trafficMeasurements(miv.getMeetpunt());
 
-
         lastReadInDate = miv.getTijdPublicatie().toGregorianCalendar().getTime();
-
 
         log.info("retrieved {} events ", trafficEventList.size()) ;
 

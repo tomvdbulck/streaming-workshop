@@ -1,15 +1,16 @@
 package be.ordina.workshop.streaming.storm.storm.service;
 
 import be.ordina.workshop.streaming.storm.storm.domain.TrafficEvent;
-import be.ordina.workshop.streaming.storm.storm.service.bolts.PrintingBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficCountBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficEventBolt;
+import be.ordina.workshop.streaming.storm.storm.service.bolts.CountPerSensorIdBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.generated.StormTopology;
 import org.apache.storm.kafka.spout.*;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.topology.base.BaseWindowedBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.springframework.stereotype.Component;
@@ -104,13 +105,16 @@ public class StormRunnerWithKafka{
         cluster.submitTopology("storm-kafka-client-spout-test", tpConf, getTopologyKafkaSpout(getKafkaSpoutConfig(KAFKA_LOCAL_BROKER)));
     }
 
-    protected StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
+    private StormTopology getTopologyKafkaSpout(KafkaSpoutConfig<String, String> spoutConfig) {
         final TopologyBuilder tp = new TopologyBuilder();
         tp.setSpout("kafka_spout", new KafkaSpout<>(spoutConfig), 1).setDebug(false);
         tp.setBolt("trafficEvent_Bolt", new TrafficEventBolt(sensorIdsToProcess)).setDebug(false)
                 .globalGrouping("kafka_spout");
         tp.setBolt("updateTrafficEventStats_bolt", new TrafficCountBolt()).setDebug(true)
                 .fieldsGrouping("trafficEvent_Bolt", new Fields("sensorId"));
+        tp.setBolt("windowedProcessBolt", new CountPerSensorIdBolt().withWindow(BaseWindowedBolt.Duration.seconds(5)))
+                .setDebug(true)
+                .globalGrouping("trafficEvent_Bolt");
         return tp.createTopology();
     }
 

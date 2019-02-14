@@ -18,7 +18,6 @@ public class SensorData {
 
     private String name;
 
-
     /*
     Unique road number.
         More info in the dataset of numbered roads in the "Wegenregister" (Roads registry), field: locatieide,
@@ -27,8 +26,6 @@ public class SensorData {
         http://www.geopunt.be/catalogus/datasetfolder/12b65bc0-8c71-447a-8285-3334ca1769d8
     */
     private String ident8;
-
-
 
     /*
     Reference to the lane of the measurement point.
@@ -49,8 +46,5 @@ public class SensorData {
       (The data for TR10 and R10 are provided by the same detection loops.)
      */
     private String trafficLane;
-
-
-
 
 }
