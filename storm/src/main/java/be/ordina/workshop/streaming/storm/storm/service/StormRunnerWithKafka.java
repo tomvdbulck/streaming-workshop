@@ -1,10 +1,9 @@
 package be.ordina.workshop.streaming.storm.storm.service;
 
 import be.ordina.workshop.streaming.storm.storm.domain.TrafficEvent;
-import be.ordina.workshop.streaming.storm.storm.service.bolts.PrintingBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficCountBolt;
 import be.ordina.workshop.streaming.storm.storm.service.bolts.TrafficEventBolt;
-import be.ordina.workshop.streaming.storm.storm.service.bolts.WindowBolt;
+import be.ordina.workshop.streaming.storm.storm.service.bolts.CountPerSensorIdBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -113,7 +112,7 @@ public class StormRunnerWithKafka{
                 .globalGrouping("kafka_spout");
         tp.setBolt("updateTrafficEventStats_bolt", new TrafficCountBolt()).setDebug(true)
                 .fieldsGrouping("trafficEvent_Bolt", new Fields("sensorId"));
-        tp.setBolt("windowedProcessBolt", new WindowBolt().withWindow(BaseWindowedBolt.Duration.seconds(5)))
+        tp.setBolt("windowedProcessBolt", new CountPerSensorIdBolt().withWindow(BaseWindowedBolt.Duration.seconds(5)))
                 .setDebug(true)
                 .globalGrouping("trafficEvent_Bolt");
         return tp.createTopology();

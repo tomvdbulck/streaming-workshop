@@ -8,7 +8,7 @@ import org.apache.storm.windowing.TupleWindow;
 
 import java.util.HashMap;
 
-public class WindowBolt extends BaseWindowedBolt {
+public class CountPerSensorIdBolt extends BaseWindowedBolt {
 
     private OutputCollector collector;
 
